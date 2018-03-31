@@ -1,4 +1,4 @@
-import { parse, stringify } from '../src/index';
+import { parse, stringify } from '../src';
 
 const ini1 = `v1 = 2
 v-2=true
