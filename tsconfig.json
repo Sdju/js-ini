@@ -4,8 +4,9 @@
     "module": "commonjs",
     "declaration": true,
     "sourceMap": true,
-    "outDir": "./dist",
+    "outDir": "./lib",
     "strict": true,
     "esModuleInterop": true
-  }
+  },
+  "files": ["src/index.ts"]
 }

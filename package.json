@@ -2,7 +2,8 @@
   "name": "js-ini",
   "version": "0.0.1",
   "description": "parsing and serialize ini files",
-  "main": "dist/ini.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Sdju/js-ini.git"
@@ -13,7 +14,8 @@
   },
   "scripts": {
     "test": "jest",
-    "lint": "tslint -c tslint.json 'src/**/*.ts'"
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "build": "tsc"
   },
   "keywords": [
     "ini"
