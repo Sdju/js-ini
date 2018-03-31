@@ -3,6 +3,14 @@
   "version": "0.0.1",
   "description": "parsing and serialize ini files",
   "main": "dist/ini.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sdju/js-ini.git"
+  },
+  "bugs": {
+    "email": "zede@ventumit.ru",
+    "src": "https://github.com/Sdju/js-ini/issues"
+  },
   "scripts": {
     "test": "jest",
     "lint": "tslint -c tslint.json 'src/**/*.ts'"
@@ -10,7 +18,7 @@
   "keywords": [
     "ini"
   ],
-  "author": "zede",
+  "author": "Chernov Denis <zede@ventumit.ru>",
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^22.2.2",
