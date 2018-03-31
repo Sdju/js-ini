@@ -52,7 +52,6 @@ readTextFile('configs.ini').then((txt: string) => {
   },
 }
 ```
-```
 ### AMD
 ```javascript
 define(function(require,exports,module){
