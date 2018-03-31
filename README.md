@@ -1,6 +1,5 @@
 # js-ini
-A Node.js module that returns the parse and stringify ini-like strings
-js-ini can use in browsers
+A Node.js module that returns the parse and stringify ini-like strings.
 ## Installation 
 ```sh
 npm install js-ini --save
