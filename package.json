@@ -1,0 +1,14 @@
+{
+  "name": "js-ini",
+  "version": "0.0.1",
+  "description": "parsing and serialize ini files",
+  "main": "dist/ini.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "ini"
+  ],
+  "author": "zede",
+  "license": "MIT"
+}
