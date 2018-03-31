@@ -36,6 +36,7 @@ import { readTextFile } from 'async-file';
 readTextFile('configs.ini').then((txt: string) => {
   console.log(parse(txt));
 });
+```
 ```javascript
 {
   key1: 2,
