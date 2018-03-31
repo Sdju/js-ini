@@ -4,7 +4,8 @@
   "description": "parsing and serialize ini files",
   "main": "dist/ini.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "keywords": [
     "ini"
@@ -14,6 +15,8 @@
   "devDependencies": {
     "jest": "^22.4.3",
     "ts-jest": "^22.4.2",
+    "tslint": "^5.9.1",
+    "tslint-config-airbnb": "^5.8.0",
     "typescript": "^2.8.1"
   }
 }
