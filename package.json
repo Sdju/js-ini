@@ -1,6 +1,6 @@
 {
   "name": "js-ini",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "description": "parsing and serialize ini files",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
