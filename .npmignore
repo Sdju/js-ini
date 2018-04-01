@@ -2,3 +2,4 @@
 .idea
 .gitignore
 node_modules
+.travis.yml
