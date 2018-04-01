@@ -6,7 +6,10 @@ export interface IParseConfig {
 }
 
 export interface IStringifyConfig {
-
+  delimiter?: string;
+  blankLine?: boolean;
+  spaceBefore?: boolean;
+  spaceAfter?: boolean;
 }
 
 const $Errors: symbol = Symbol('Errors of parsing');
@@ -79,6 +82,45 @@ export function parse(data: string, params?: IParseConfig) {
   return result;
 }
 
-export function stringify(data: any, params?: IStringifyConfig) {
+export function stringify(data: any, params?: IStringifyConfig): string {
+  const { delimiter, blankLine, spaceBefore, spaceAfter } = {
+    delimiter: '=',
+    blankLine: true,
+    spaceBefore: false,
+    spaceAfter: false,
+    ...params,
+  };
+  const chunks: string[] = [];
+  const formatPare = (key: string, val: string): string => {
+    let res: string = key;
+    if (spaceBefore) {
+      res += ' ';
+    }
+    res += delimiter;
+    if (spaceAfter) {
+      res += ' ';
+    }
+    res += val;
+    return res;
+  };
+  const sectionKeys: string[] = [];
 
+  for (const key of Object.keys(data)) {
+    let keyIsAdded: boolean = false;
+    while ((sectionKeys.length > 0) || !keyIsAdded) {
+      const curKey: string = (keyIsAdded) ? <string>sectionKeys.pop() : key;
+      const val = (keyIsAdded) ? data[key][curKey] : data[curKey];
+      keyIsAdded = true;
+      if (['boolean', 'string', 'number'].includes(typeof val)) {
+        chunks.push(formatPare(curKey, val.toString()));
+      } else if (typeof val === 'object') {
+        if (blankLine) {
+          chunks.push('');
+        }
+        chunks.push(`[${key}]`);
+        sectionKeys.push(...Object.keys(val));
+      }
+    }
+  }
+  return chunks.join('\n');
 }
