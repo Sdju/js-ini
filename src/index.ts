@@ -11,6 +11,7 @@ export interface IStringifyConfig {
   blankLine?: boolean;
   spaceBefore?: boolean;
   spaceAfter?: boolean;
+  baseScope?: null | number | string | symbol;
 }
 
 const $Errors: symbol = Symbol('Errors of parsing');
@@ -124,6 +125,9 @@ export function stringify(data: any, params?: IStringifyConfig): string {
       if (['boolean', 'string', 'number'].includes(typeof val)) {
         chunks.push(formatPare(curKey, val.toString()));
       } else if (typeof val === 'object') {
+        if (sectionKeys.length > 0) {
+          throw new Error('');
+        }
         if (blankLine) {
           chunks.push('');
         }
