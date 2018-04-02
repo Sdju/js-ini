@@ -57,18 +57,32 @@ const v1 = {
 };
 const v2 = {
   v1: '2',
-  ['v-2']: 'true',
-  ['v 3']: 'string',
+  'v-2': 'true',
+  'v 3': 'string',
   smbd: {
     v1: '5',
     v2: 'what',
     v5: 'who is who = who',
   },
-  ['test scope with spaces']: {
-    ['mgm*1']: '2.5',
+  'test scope with spaces': {
+    'mgm*1': '2.5',
   },
 };
-
+const v3 = {
+  global: {
+    v1: '2',
+    'v-2': 'true',
+    'v 3': 'string',
+  },
+  smbd: {
+    v1: '5',
+    v2: 'what',
+    v5: 'who is who = who',
+  },
+  'test scope with spaces': {
+    'mgm*1': '2.5',
+  },
+};
 
 
 test('ini parsing', () => {
@@ -77,6 +91,12 @@ test('ini parsing', () => {
   expect(parse(ini2, { comment: '#', delimiter: ':' })).toEqual(v1);
 
   expect(parse(ini2, { comment: '#', delimiter: ':', autoTyping: false })).toEqual(v2);
+
+  expect(parse(ini3, {
+    comment: '#',
+    autoTyping: false,
+    baseScope: 'global',
+  })).toEqual(v3);
 });
 
 test('ini stringify', () => {
