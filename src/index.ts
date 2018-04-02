@@ -3,6 +3,7 @@ export interface IParseConfig {
   delimiter?: string;
   nothrow?: boolean;
   autoTyping?: boolean;
+  baseScope?: null | number | string | symbol;
 }
 
 export interface IStringifyConfig {
@@ -30,17 +31,22 @@ const autoType = (val: string): boolean | number | string => {
 };
 
 export function parse(data: string, params?: IParseConfig) {
-  const { delimiter, comment, nothrow, autoTyping } = {
+  const { delimiter, comment, nothrow, autoTyping, baseScope } = {
     delimiter: '=',
     comment: ';',
     nothrow: false,
     autoTyping: true,
+    baseScope: null,
     ...params,
   };
 
   const lines: string[] = data.split(/\r?\n/g);
   let currentSection: string = '';
   const result: any = {};
+
+  if (baseScope !== null) {
+    result[baseScope] = {};
+  }
 
   for (const rawLine of lines) {
     const line: string = rawLine.trim();
@@ -64,7 +70,11 @@ export function parse(data: string, params?: IParseConfig) {
           result[currentSection] = { [name]: val };
         }
       } else {
-        result[name] = val;
+        if (baseScope === null) {
+          result[name] = val;
+        } else {
+          result[baseScope][name] = val;
+        }
       }
       continue;
     }
