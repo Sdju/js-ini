@@ -1,4 +1,5 @@
 # js-ini
+[![Build Status](https://travis-ci.org/Sdju/js-ini.svg?branch=master)](https://travis-ci.org/Sdju/js-ini)
 A Node.js module that returns the parse and stringify ini-like strings.
 ## Installation 
 ```sh
