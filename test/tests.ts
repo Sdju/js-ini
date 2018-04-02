@@ -44,15 +44,15 @@ v1: 5
 mgm*1: 2.5`;
 const v1 = {
   v1: 2,
-  ['v-2']: true,
-  ['v 3']: 'string',
+  'v-2': true,
+  'v 3': 'string',
   smbd: {
     v1: 5,
     v2: 'what',
     v5: 'who is who = who',
   },
-  ['test scope with spaces']: {
-    ['mgm*1']: 2.5,
+  'test scope with spaces': {
+    'mgm*1': 2.5,
   },
 };
 const v2 = {
