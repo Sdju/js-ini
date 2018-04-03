@@ -112,6 +112,9 @@ export function stringify(data: any, params?: IStringifyConfig): string {
       if (['boolean', 'string', 'number'].includes(typeof val)) {
         chunks.push(formatPare(curKey, val.toString()));
       } else if (typeof val === 'object') {
+        if (sectionKeys.length > 0) {
+          throw new Error('too much nesting');
+        }
         if (blankLine) {
           chunks.push('');
         }
