@@ -30,13 +30,12 @@ const autoType = (val: string): boolean | number | string => {
 };
 
 export function parse(data: string, params?: IParseConfig) {
-  const { delimiter, comment, nothrow, autoTyping } = {
-    delimiter: '=',
-    comment: ';',
-    nothrow: false,
-    autoTyping: true,
-    ...params,
-  };
+  const {
+    delimiter = '=',
+    comment = ';',
+    nothrow = false,
+    autoTyping = true,
+  } = { ...params };
 
   const lines: string[] = data.split(/\r?\n/g);
   let currentSection: string = '';
@@ -83,13 +82,12 @@ export function parse(data: string, params?: IParseConfig) {
 }
 
 export function stringify(data: any, params?: IStringifyConfig): string {
-  const { delimiter, blankLine, spaceBefore, spaceAfter } = {
-    delimiter: '=',
-    blankLine: true,
-    spaceBefore: false,
-    spaceAfter: false,
-    ...params,
-  };
+  const {
+    delimiter = '=',
+    blankLine = true,
+    spaceBefore = false,
+    spaceAfter = false,
+  } = { ...params };
   const chunks: string[] = [];
   const formatPare = (key: string, val: string): string => {
     let res: string = key;
