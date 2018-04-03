@@ -88,4 +88,21 @@ test('ini stringify', () => {
     spaceAfter: true,
     spaceBefore: false,
   })).toBe(ini4);
+
+  expect(() => {
+    stringify({
+      a: 5,
+      b: 3,
+      c: {
+        d: 8,
+        e: 9,
+      },
+      f: {
+        g: 'init',
+        h: {
+          msg: 'nesting',
+        },
+      },
+    });
+  }).toThrow();
 });
