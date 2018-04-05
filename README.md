@@ -87,9 +87,10 @@ Tries to translate strings to boolean / number
 ### stringify(data: object, params?: IStringifyConfig): string
 #### data
 Type: `object`
-object to convert to ini-string
+object to convert in ini-string
 #### params
 Type: IStringifyConfig
+conversion parameters in ini-string
 ##### delimiter
 Type: `string`
 Default: `=`
@@ -98,11 +99,11 @@ Delimiter between key and value
 Type: `boolean`
 Default: `true`
 Add blank lines between sections
-#### spaceBefore
+##### spaceBefore
 Type: `boolean`
 Default: `false`
 Add space between key and delimiter
-#### spaceAfter
+##### spaceAfter
 Type: `boolean`
 Default: `false`
 Add space between value and delimiter
