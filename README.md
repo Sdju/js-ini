@@ -1,4 +1,6 @@
 # js-ini
+[![Build Status](https://travis-ci.org/Sdju/js-ini.svg?branch=master)](https://travis-ci.org/Sdju/js-ini)
+
 A Node.js module that returns the parse and stringify ini-like strings.
 ## Installation 
 ```sh
@@ -37,6 +39,7 @@ readTextFile('configs.ini').then((txt: string) => {
   console.log(parse(txt));
 });
 ```
+Output:
 ```javascript
 {
   key1: 2,
@@ -58,7 +61,52 @@ define(function(require,exports,module){
   var ini = require('js-ini');
 });
 ```
-## Test 
+## API
+### parse(data: string, params?: IParseConfig): object
+#### data
+Type: `string`
+string with ini data
+#### params
+Type: `IParseConfig`
+##### comment
+Type: `string`
+Default: `;`
+String for start of comment
+##### delimiter
+Type: `string`
+Default: `=`
+Delimiter between key and value
+##### nothrow
+Type: `boolean`
+Default: `false`
+##### autoTyping
+Type: `boolean`
+Default: `true`
+Tries to translate strings to boolean / number
+
+### stringify(data: object, params?: IStringifyConfig): string
+#### data
+Type: `object`
+object to convert to ini-string
+#### params
+Type: IStringifyConfig
+##### delimiter
+Type: `string`
+Default: `=`
+Delimiter between key and value
+##### blackLine
+Type: `boolean`
+Default: `true`
+Add blank lines between sections
+#### spaceBefore
+Type: `boolean`
+Default: `false`
+Add space between key and delimiter
+#### spaceAfter
+Type: `boolean`
+Default: `false`
+Add space between value and delimiter
+## Test
 ```sh
 npm run test
 ```
