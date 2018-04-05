@@ -81,7 +81,7 @@ export function parse(data: string, params?: IParseConfig) {
   return result;
 }
 
-export function stringify(data: any, params?: IStringifyConfig): string {
+export function stringify(data: object, params?: IStringifyConfig): string {
   const {
     delimiter = '=',
     blankLine = true,
