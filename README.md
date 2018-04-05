@@ -1,7 +1,7 @@
 # js-ini
 [![Build Status](https://travis-ci.org/Sdju/js-ini.svg?branch=master)](https://travis-ci.org/Sdju/js-ini)
 
-A Node.js module that returns the parse and stringify ini-like strings.
+A Node.js package for encoding/decoding ini-like strings.
 ## Installation 
 ```sh
 npm install js-ini --save
@@ -11,17 +11,20 @@ bower install js-ini --save
 ## Usage
 ### configs.ini
 ```ini
-key1 = 2
-key-2=true
-key 3 = string
-[smbd]
-key1=5
-key2 = what 
-; some comment
-key3 = who is who = who
+option = 2
+useDatabase= true
+password type = string
 
-[test scope with spaces]
-key*1  = 2.5
+[Database settings]
+nodes=5
+user = admin 
+; some comment
+password = some very*difficult=password:
+database-name =my-project-db
+
+[User settings]
+param*1  = 2.5
+param*2= struct
 ```
 ### Javascript
 ```javascript
@@ -40,19 +43,20 @@ readTextFile('configs.ini').then((txt: string) => {
 });
 ```
 Output:
-```javascript
+```JSON
 {
-  key1: 2,
-  'key-2': true,
-  'key 3': 'string',
-  smbd: {
-    key1: 5,
-    key2: 'what',
-    key5: 'who is who = who',
+  "option": 2,
+  "useDatabase": true,
+  "password type": "string",
+  "Database settings": {
+    "node": 5,
+    "user": "admin",
+    "password": "some very*difficult=password:"
   },
-  'test scope with spaces': {
-    'key*1': 2.5,
-  },
+  "User settings": {
+    "param*1": 2.5,
+    "param*2": "struct"
+  }
 }
 ```
 ### AMD
@@ -65,51 +69,75 @@ define(function(require,exports,module){
 ### parse(data: string, params?: IParseConfig): object
 #### data
 Type: `string`
-string with ini data
+
+String with ini-like data
 #### params
 Type: `IParseConfig`
-parsing parameters
 
+Decoding params
 ##### comment
 Type: `string`
+
 Default: `;`
+
 String for start of comment
 ##### delimiter
 Type: `string`
+
 Default: `=`
+
 Delimiter between key and value
 ##### nothrow
 Type: `boolean`
+
 Default: `false`
+
+Use field `Symbol('Errors of parsing')` instead `throw`
+
 ##### autoTyping
 Type: `boolean`
+
 Default: `true`
-Tries to translate strings to boolean / number
+
+Try to auto translate strings to boolean / number values
 
 ### stringify(data: object, params?: IStringifyConfig): string
 #### data
 Type: `object`
-object to convert in ini-string
+
+object to encode to ini-string
 #### params
 Type: `IStringifyConfig`
 
-conversion parameters in ini-string
+Encoding params
 ##### delimiter
 Type: `string`
+
 Default: `=`
+
 Delimiter between key and value
+
 ##### blackLine
 Type: `boolean`
+
 Default: `true`
+
 Add blank lines between sections
+
 ##### spaceBefore
 Type: `boolean`
+
 Default: `false`
+
 Add space between key and delimiter
+
 ##### spaceAfter
 Type: `boolean`
+
 Default: `false`
+
 Add space between value and delimiter
+
 ## Test
 ```sh
 npm run test
