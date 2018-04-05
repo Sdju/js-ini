@@ -68,6 +68,8 @@ Type: `string`
 string with ini data
 #### params
 Type: `IParseConfig`
+parsing parameters
+
 ##### comment
 Type: `string`
 Default: `;`
@@ -89,7 +91,8 @@ Tries to translate strings to boolean / number
 Type: `object`
 object to convert in ini-string
 #### params
-Type: IStringifyConfig
+Type: `IStringifyConfig`
+
 conversion parameters in ini-string
 ##### delimiter
 Type: `string`
