@@ -102,6 +102,52 @@ Default: `true`
 
 Try to auto translate strings to boolean / number values
 
+##### dataSections
+Type: `string[]`
+
+Default: `[]`
+
+Section will be marked as dataSection and will be parsed like a array of string
+ 
+Sample:
+```ini
+option = 2
+useDatabase= true
+password type = string
+
+[some strings]
+a82cfac96d9b71248bf5faa2b22d7cf7
+0c420a02dc13656d15aefe71e5b06ecf
+
+[User settings]
+param*1  = 2.5
+param*2= struct
+```
+```js
+import { parse } from 'js-ini';
+import { readTextFile } from 'async-file';
+readTextFile('configs.ini').then((txt: string) => {
+  console.log(parse(txt, { dataSections: ['some strings'] }));
+});
+```
+Output:
+```json
+{
+  "option": 2,
+  "useDatabase": true,
+  "password type": "string",
+  "some strings": [
+  	"a82cfac96d9b71248bf5faa2b22d7cf7",
+  	"0c420a02dc13656d15aefe71e5b06ecf"
+  ],
+  "User settings": {
+    "param*1": 2.5,
+    "param*2": "struct"
+  }
+}
+```
+
+
 ### stringify(data: object, params?: IStringifyConfig): string
 **Alias:** `encode`
 #### data
