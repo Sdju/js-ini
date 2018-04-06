@@ -3,6 +3,7 @@ export interface IParseConfig {
   delimiter?: string;
   nothrow?: boolean;
   autoTyping?: boolean;
+  dataSections?: string[];
 }
 
 export interface IStringifyConfig {
@@ -35,10 +36,12 @@ export function parse(data: string, params?: IParseConfig) {
     comment = ';',
     nothrow = false,
     autoTyping = true,
+    dataSections = [],
   } = { ...params };
 
   const lines: string[] = data.split(/\r?\n/g);
   let currentSection: string = '';
+  let isDataSection: boolean = false;
   const result: any = {};
 
   for (const rawLine of lines) {
@@ -49,8 +52,16 @@ export function parse(data: string, params?: IParseConfig) {
       const match = line.match(sectionNameRegex);
       if (match !== null) {
         currentSection = match[1].trim();
+        isDataSection = dataSections.includes(currentSection);
         continue;
       }
+    } else if (isDataSection) {
+      if (result[currentSection] !== void 0) {
+        result[currentSection].push(rawLine);
+      } else {
+        result[currentSection] = [rawLine];
+      }
+      continue;
     } else if (line.includes(delimiter)) {
       const posOfDelimiter: number = line.indexOf(delimiter);
       const name = line.slice(0, posOfDelimiter).trim();
