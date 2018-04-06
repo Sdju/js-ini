@@ -67,6 +67,7 @@ define(function(require,exports,module){
 ```
 ## API
 ### parse(data: string, params?: IParseConfig): object
+**Alias:** `decode`
 #### data
 Type: `string`
 
@@ -102,6 +103,7 @@ Default: `true`
 Try to auto translate strings to boolean / number values
 
 ### stringify(data: object, params?: IStringifyConfig): string
+**Alias:** `encode`
 #### data
 Type: `object`
 
