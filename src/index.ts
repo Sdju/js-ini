@@ -125,3 +125,6 @@ export function stringify(data: object, params?: IStringifyConfig): string {
   }
   return chunks.join('\n');
 }
+
+export const decode = parse;
+export const encode = stringify;
