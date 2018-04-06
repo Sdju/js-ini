@@ -42,6 +42,17 @@ v2: what
 v1: 5
 [test scope with spaces]
 mgm*1: 2.5`;
+const ini5 = `v1: 2
+v-2: true
+v 3: string
+[smbd]
+v5: who is who = who
+v2: what
+v1: 5
+[test scope with data]
+b1c,wdwd,15:68
+wx/w':wwdlw,:d,wld
+efkeofk`;
 const v1 = {
   v1: 2,
   ['v-2']: true,
@@ -77,6 +88,23 @@ test('ini parsing', () => {
   expect(parse(ini2, { comment: '#', delimiter: ':' })).toEqual(v1);
 
   expect(parse(ini2, { comment: '#', delimiter: ':', autoTyping: false })).toEqual(v2);
+
+  expect(parse(ini5, { delimiter: ':', dataSections: ['test scope with data'] }))
+    .toEqual({
+      v1: 2,
+      ['v-2']: true,
+      ['v 3']: 'string',
+      smbd: {
+        v1: 5,
+        v2: 'what',
+        v5: 'who is who = who',
+      },
+      ['test scope with data']: [
+        'b1c,wdwd,15:68',
+        'wx/w\':wwdlw,:d,wld',
+        'efkeofk',
+      ],
+    });
 });
 
 test('ini stringify', () => {
