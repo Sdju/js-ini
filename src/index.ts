@@ -53,14 +53,13 @@ export function parse(data: string, params?: IParseConfig) {
       if (match !== null) {
         currentSection = match[1].trim();
         isDataSection = dataSections.includes(currentSection);
+        if (result[currentSection] === void 0) {
+          result[currentSection] = (isDataSection) ? [] : {};
+        }
         continue;
       }
     } else if (isDataSection) {
-      if (result[currentSection] !== void 0) {
-        result[currentSection].push(rawLine);
-      } else {
-        result[currentSection] = [rawLine];
-      }
+      result[currentSection].push(rawLine);
       continue;
     } else if (line.includes(delimiter)) {
       const posOfDelimiter: number = line.indexOf(delimiter);
@@ -68,11 +67,7 @@ export function parse(data: string, params?: IParseConfig) {
       const rawVal = line.slice(posOfDelimiter + 1).trim();
       const val = (autoTyping) ? autoType(rawVal) : rawVal;
       if (currentSection !== '') {
-        if (result[currentSection] !== void 0) {
-          result[currentSection][name] = val;
-        } else {
-          result[currentSection] = { [name]: val };
-        }
+        result[currentSection][name] = val;
       } else {
         result[name] = val;
       }
