@@ -77,7 +77,7 @@ export function parse(data: string, params?: IParseConfig) {
     if (!nothrow) {
       throw error;
     } else {
-      if (result[$Errors] !== void 0) {
+      if (result[$Errors] === void 0) {
         result[$Errors] = [error];
       } else {
         result[$Errors].push(error);
