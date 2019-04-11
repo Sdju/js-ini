@@ -13,9 +13,25 @@ export interface IStringifyConfig {
   spaceAfter?: boolean;
 }
 
-const $Errors: symbol = Symbol('Errors of parsing');
+export const $Errors: unique symbol = Symbol('Errors of parsing');
 const createErrorOfParse = (line: string) => new Error(`Unsupported type of line: "${line}"`);
 const sectionNameRegex = /\[(.*)]$/;
+
+export type IniValue = string | number | boolean;
+
+export interface IIniObjectSection {
+  [index: string]: IniValue;
+}
+
+export interface IIniObjectDataSection {
+  [index: number]: IniValue;
+}
+
+export interface IIniObject {
+  [index: string]: IIniObjectSection | IIniObjectDataSection | IniValue;
+
+  [$Errors]?: any;
+}
 
 const autoType = (val: string): boolean | number | string => {
   if ((val === 'true') || (val === 'false')) {
@@ -30,7 +46,7 @@ const autoType = (val: string): boolean | number | string => {
   return val;
 };
 
-export function parse(data: string, params?: IParseConfig) {
+export function parse(data: string, params?: IParseConfig): IIniObject {
   const {
     delimiter = '=',
     comment = ';',
@@ -42,7 +58,7 @@ export function parse(data: string, params?: IParseConfig) {
   const lines: string[] = data.split(/\r?\n/g);
   let currentSection: string = '';
   let isDataSection: boolean = false;
-  const result: any = {};
+  const result: IIniObject = {};
 
   for (const rawLine of lines) {
     const line: string = rawLine.trim();
@@ -59,7 +75,7 @@ export function parse(data: string, params?: IParseConfig) {
         continue;
       }
     } else if (isDataSection) {
-      result[currentSection].push(rawLine);
+      (<IniValue[]>result[currentSection]).push(rawLine);
       continue;
     } else if (line.includes(delimiter)) {
       const posOfDelimiter: number = line.indexOf(delimiter);
@@ -67,7 +83,7 @@ export function parse(data: string, params?: IParseConfig) {
       const rawVal = line.slice(posOfDelimiter + 1).trim();
       const val = (autoTyping) ? autoType(rawVal) : rawVal;
       if (currentSection !== '') {
-        result[currentSection][name] = val;
+        (<IIniObjectSection>result[currentSection])[name] = val;
       } else {
         result[name] = val;
       }
@@ -87,7 +103,7 @@ export function parse(data: string, params?: IParseConfig) {
   return result;
 }
 
-export function stringify(data: object, params?: IStringifyConfig): string {
+export function stringify(data: IIniObject, params?: IStringifyConfig): string {
   const {
     delimiter = '=',
     blankLine = true,
@@ -113,7 +129,7 @@ export function stringify(data: object, params?: IStringifyConfig): string {
     let keyIsAdded: boolean = false;
     while ((sectionKeys.length > 0) || !keyIsAdded) {
       const curKey: string = (keyIsAdded) ? <string>sectionKeys.pop() : key;
-      const val = (keyIsAdded) ? data[key][curKey] : data[curKey];
+      const val = (keyIsAdded) ? (<any>data[key])[curKey] : data[curKey];
       keyIsAdded = true;
       if (['boolean', 'string', 'number'].includes(typeof val)) {
         chunks.push(formatPare(curKey, val.toString()));
