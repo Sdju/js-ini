@@ -79,6 +79,21 @@ const v2 = {
     ['mgm*1']: '2.5',
   },
 };
+const v3 = {
+  v1: '2',
+  ['v-2']: 'true',
+  ['v 3']: 'string',
+  smbd: {
+    v1: '5',
+    v2: 'what',
+    v5: 'who is who = who',
+  },
+  ['test scope with data']: [
+    'mfkl;wemfvvlkj;sdafn bv',
+    'qpo[weiktjkgtjgiqewrjgoepqrg',
+    'qwlfp-[weklfpowek,mf',
+  ],
+};
 
 
 
@@ -133,4 +148,11 @@ test('ini stringify', () => {
       },
     });
   }).toThrow();
+
+  expect(parse(stringify(v3), {
+    dataSections: ['test scope with data'],
+    autoTyping: false
+  })).toEqual(v3);
+
+  console.log(stringify(v3));
 });

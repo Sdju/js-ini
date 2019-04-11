@@ -143,7 +143,12 @@ export function stringify(data: IIniObject, params?: IStringifyConfig): string {
           chunks.push('');
         }
         chunks.push(`[${key}]`);
-        sectionKeys.push(...Object.keys(val));
+        if (Array.isArray(val)) {
+          // is datasection
+          chunks.push(...val);
+        } else {
+          sectionKeys.push(...Object.keys(val));
+        }
       }
     }
   }
