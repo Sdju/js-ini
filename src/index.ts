@@ -69,7 +69,7 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
       if (match !== null) {
         currentSection = match[1].trim();
         isDataSection = dataSections.includes(currentSection);
-        if (result[currentSection] === void 0) {
+        if (!(currentSection in result)) {
           result[currentSection] = (isDataSection) ? [] : {};
         }
         continue;
@@ -89,14 +89,15 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
       }
       continue;
     }
+
     const error = createErrorOfParse(line);
     if (!nothrow) {
       throw error;
     } else {
-      if (result[$Errors] === void 0) {
-        result[$Errors] = [error];
-      } else {
+      if ($Errors in result) {
         result[$Errors].push(error);
+      } else {
+        result[$Errors] = [error];
       }
     }
   }
@@ -131,7 +132,8 @@ export function stringify(data: IIniObject, params?: IStringifyConfig): string {
       const curKey: string = (keyIsAdded) ? <string>sectionKeys.pop() : key;
       const val = (keyIsAdded) ? (<any>data[key])[curKey] : data[curKey];
       keyIsAdded = true;
-      if (['boolean', 'string', 'number'].includes(typeof val)) {
+      const valType: string = typeof val;
+      if (['boolean', 'string', 'number'].includes(valType)) {
         chunks.push(formatPare(curKey, val.toString()));
       } else if (typeof val === 'object') {
         if (sectionKeys.length > 0) {
