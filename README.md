@@ -1,5 +1,7 @@
 # js-ini
 [![Build Status](https://travis-ci.org/Sdju/js-ini.svg?branch=master)](https://travis-ci.org/Sdju/js-ini)
+[![NPM version](https://img.shields.io/npm/v/js-ini.svg?style=flat-square)](https://www.npmjs.com/package/js-ini)
+[![Downloads](http://img.shields.io/npm/dm/js-ini.svg?style=flat-square)](https://npmjs.org/package/js-ini)
 
 A Node.js package for encoding/decoding ini-like strings.
 ## Installation 
