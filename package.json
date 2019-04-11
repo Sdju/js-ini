@@ -21,7 +21,7 @@
     "ini",
     "parse"
   ],
-  "author": "Chernov Denis <zede@ventumit.ru>",
+  "author": "Denis Chernov<zede@ventumit.ru>",
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^22.2.2",

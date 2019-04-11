@@ -8,8 +8,11 @@ npm install js-ini --save
 yarn add js-ini
 bower install js-ini --save
 ```
-## Usage
-### configs.ini
+## Examples
+
+Example of parsing:
+
+**configs.ini**
 ```ini
 option = 2
 useDatabase= true
@@ -26,7 +29,7 @@ database-name =my-project-db
 param*1  = 2.5
 param*2= struct
 ```
-### Javascript
+### Javascript version
 ```javascript
 const ini = require('js-ini');
 const fs = require('async-file');
@@ -34,7 +37,7 @@ fs.readTextFile('configs.ini').then((txt) => {
   console.log(ini.parse(txt));
 });
 ```
-### TypeScript
+### TypeScript version
 ```typescript
 import { parse } from 'js-ini';
 import { readTextFile } from 'async-file';
@@ -42,7 +45,7 @@ readTextFile('configs.ini').then((txt: string) => {
   console.log(parse(txt));
 });
 ```
-Output:
+**Output:**
 ```JSON
 {
   "option": 2,
@@ -59,12 +62,8 @@ Output:
   }
 }
 ```
-### AMD
-```javascript
-define(function(require,exports,module){
-  var ini = require('js-ini');
-});
-```
+
+
 ## API
 ### parse(data: string, params?: IParseConfig): object
 **Alias:** `decode`
@@ -76,40 +75,16 @@ String with ini-like data
 Type: `IParseConfig`
 
 Decoding params
-##### comment
-Type: `string`
 
-Default: `;`
-
-String for start of comment
-##### delimiter
-Type: `string`
-
-Default: `=`
-
-Delimiter between key and value
-##### nothrow
-Type: `boolean`
-
-Default: `false`
-
-Use field `Symbol('Errors of parsing')` instead `throw`
-
-##### autoTyping
-Type: `boolean`
-
-Default: `true`
-
-Try to auto translate strings to boolean / number values
-
-##### dataSections
-Type: `string[]`
-
-Default: `[]`
-
-Section will be marked as dataSection and will be parsed like a array of string
+|      name        | type       | defaut value |            description                                                          |
+|------------------|------------|--------------|---------------------------------------------------------------------------------|
+| **comment**      | `string`   | `;`          | String for start of comment                                                     |
+| **delimiter**    | `string`   | `=`          | Delimiter between key and value                                                 |
+| **nothrow**      | `boolean`  | `false`      | Use field `Symbol('Errors of parsing')` instead `throw`                         |
+| **autoTyping**   | `boolean`  | `true`       | Try to auto translate strings to boolean / number values                        |
+| **dataSections** | `string[]` | `[]`         | Section will be marked as dataSection and will be parsed like a array of string |
  
-Sample:
+Data section sample:
 ```ini
 option = 2
 useDatabase= true
@@ -158,35 +133,18 @@ object to encode to ini-string
 Type: `IStringifyConfig`
 
 Encoding params
-##### delimiter
-Type: `string`
 
-Default: `=`
-
-Delimiter between key and value
-
-##### blackLine
-Type: `boolean`
-
-Default: `true`
-
-Add blank lines between sections
-
-##### spaceBefore
-Type: `boolean`
-
-Default: `false`
-
-Add space between key and delimiter
-
-##### spaceAfter
-Type: `boolean`
-
-Default: `false`
-
-Add space between value and delimiter
+|      name       | type      | defaut value |            description                |
+|-----------------|-----------|--------------|---------------------------------------|
+| **delimiter**   | `string`  | `=`          | Delimiter between key and value       |
+| **blankLine**   | `boolean` | `true`       | Add blank lines between sections      |
+| **spaceBefore** | `boolean` | `true`       | Add space between key and delimiter   |
+| **spaceAfter**  | `boolean` | `false`      | Add space between value and delimiter |
 
 ## Test
 ```sh
 npm run test
 ```
+
+## License
+[MIIT](https://github.com/Sdju/js-ini/blob/master/LICENSE)
