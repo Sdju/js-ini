@@ -27,9 +27,9 @@ v-2=true
 v 3=string
 
 [smbd]
-v5=who is who = who
-v2=what
 v1=5
+v2=what
+v5=who is who = who
 
 [test scope with spaces]
 mgm*1=2.5`;
@@ -37,9 +37,9 @@ const ini4 = `v1: 2
 v-2: true
 v 3: string
 [smbd]
-v5: who is who = who
-v2: what
 v1: 5
+v2: what
+v5: who is who = who
 [test scope with spaces]
 mgm*1: 2.5`;
 const ini5 = `v1: 2
@@ -94,7 +94,13 @@ const v3 = {
     'qwlfp-[weklfpowek,mf',
   ],
 };
-
+const v4 = {
+  section: { 
+    [1]: 'All',
+    [2]: 'in',
+    [3]: 'order.',
+  },
+};
 
 
 test('ini parsing', () => {
@@ -151,8 +157,6 @@ test('ini stringify', () => {
 
   expect(parse(stringify(v3), {
     dataSections: ['test scope with data'],
-    autoTyping: false
+    autoTyping: false,
   })).toEqual(v3);
-
-  console.log(stringify(v3));
 });
