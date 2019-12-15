@@ -17,19 +17,15 @@ export const $Errors: unique symbol = Symbol('Errors of parsing');
 const createErrorOfParse = (line: string) => new Error(`Unsupported type of line: "${line}"`);
 const sectionNameRegex = /\[(.*)]$/;
 
-export type IniValue = string | number | boolean;
+export type IniValue = string | number | boolean | IIniObjectSection | IIniObjectDataSection;
 
 export interface IIniObjectSection {
   [index: string]: IniValue;
 }
 
-export interface IIniObjectDataSection {
-  [index: number]: IniValue;
-}
+export type IIniObjectDataSection = string[];
 
-export interface IIniObject {
-  [index: string]: IIniObjectSection | IIniObjectDataSection | IniValue;
-
+export interface IIniObject extends IIniObjectSection {
   [$Errors]?: any;
 }
 
@@ -64,7 +60,7 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
     const line: string = rawLine.trim();
     if ((line.length === 0) || (line.startsWith(comment))) {
       continue;
-    } else if (line[0].startsWith('[')) {
+    } else if (line[0] === '[') {
       const match = line.match(sectionNameRegex);
       if (match !== null) {
         currentSection = match[1].trim();
@@ -101,6 +97,7 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
       }
     }
   }
+
   return result;
 }
 
@@ -124,19 +121,27 @@ export function stringify(data: IIniObject, params?: IStringifyConfig): string {
     res += val;
     return res;
   };
-  const sectionKeys: string[] = [];
+  let sectionKeys: string[] | null = null;
+  let curKeyId: number = 0;
 
   for (const key of Object.keys(data)) {
-    let keyIsAdded: boolean = false;
-    while ((sectionKeys.length > 0) || !keyIsAdded) {
-      const curKey: string = (keyIsAdded) ? <string>sectionKeys.pop() : key;
-      const val = (keyIsAdded) ? (<any>data[key])[curKey] : data[curKey];
-      keyIsAdded = true;
+    while (!sectionKeys || (sectionKeys.length !== curKeyId)) {
+      let curKey: string;
+      if (sectionKeys) {
+        curKey = sectionKeys[ curKeyId ];
+        curKeyId += 1;
+      } else {
+        curKey = key;
+      }
+      const val = (sectionKeys) ? (<any>data[ key ])[ curKey ] : data[ curKey ];
       const valType: string = typeof val;
       if (['boolean', 'string', 'number'].includes(valType)) {
         chunks.push(formatPare(curKey, val.toString()));
+        if (!sectionKeys) {
+          break;
+        }
       } else if (typeof val === 'object') {
-        if (sectionKeys.length > 0) {
+        if (sectionKeys) {
           throw new Error('too much nesting');
         }
         if (blankLine) {
@@ -146,11 +151,14 @@ export function stringify(data: IIniObject, params?: IStringifyConfig): string {
         if (Array.isArray(val)) {
           // is datasection
           chunks.push(...val);
+          break;
         } else {
-          sectionKeys.push(...Object.keys(val));
+          sectionKeys = Object.keys(val);
         }
       }
     }
+    sectionKeys = null;
+    curKeyId = 0;
   }
   return chunks.join('\n');
 }
