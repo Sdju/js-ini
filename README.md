@@ -149,4 +149,4 @@ npm run test
 ```
 
 ## License
-[MIIT](https://github.com/Sdju/js-ini/blob/master/LICENSE)
+[MIT](https://github.com/Sdju/js-ini/blob/master/LICENSE)
