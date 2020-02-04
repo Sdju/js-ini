@@ -1,3 +1,6 @@
+import { $Errors, ParsingError } from './errors';
+export * from './errors';
+
 export interface IParseConfig {
   comment?: string;
   delimiter?: string;
@@ -13,8 +16,6 @@ export interface IStringifyConfig {
   spaceAfter?: boolean;
 }
 
-export const $Errors: unique symbol = Symbol('Errors of parsing');
-const createErrorOfParse = (line: string, id: number) => new Error(`Unsupported type of line: [${id}]"${line}"`);
 const sectionNameRegex = /\[(.*)]$/;
 
 export type IniValue = string | number | boolean | IIniObjectSection | IIniObjectDataSection;
@@ -52,13 +53,13 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
   } = { ...params };
 
   const lines: string[] = data.split(/\r?\n/g);
-  let lineId = 0;
+  let lineNumber = 0;
   let currentSection: string = '';
   let isDataSection: boolean = false;
   const result: IIniObject = {};
 
   for (const rawLine of lines) {
-    lineId += 1;
+    lineNumber += 1;
     const line: string = rawLine.trim();
     if ((line.length === 0) || (line.startsWith(comment))) {
       continue;
@@ -88,7 +89,7 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
       continue;
     }
 
-    const error = createErrorOfParse(line, lineId);
+    const error = new ParsingError(line, lineNumber);
     if (!nothrow) {
       throw error;
     } else {
