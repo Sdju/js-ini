@@ -1,5 +1,16 @@
-import { $Errors, ParsingError } from './errors';
-export * from './errors';
+export const $Errors: unique symbol = Symbol('Errors of parsing');
+
+export class ParsingError extends Error {
+  constructor(line: string, lineNumber: number) {
+    super(`Unsupported type of line: [${lineNumber}]"${line}"`);
+    this.line = line;
+    this.lineNumber = lineNumber;
+  }
+
+  line: string;
+  lineNumber: number;
+}
+
 
 export interface IParseConfig {
   comment?: string;
@@ -27,7 +38,7 @@ export interface IIniObjectSection {
 export type IIniObjectDataSection = string[];
 
 export interface IIniObject extends IIniObjectSection {
-  [$Errors]?: any;
+  [$Errors]?: ParsingError[];
 }
 
 const autoType = (val: string): boolean | number | string => {
@@ -94,7 +105,7 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
       throw error;
     } else {
       if ($Errors in result) {
-        result[$Errors].push(error);
+        (<ParsingError[]>result[$Errors]).push(error);
       } else {
         result[$Errors] = [error];
       }
