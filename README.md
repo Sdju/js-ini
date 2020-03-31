@@ -100,7 +100,7 @@ a82cfac96d9b71248bf5faa2b22d7cf7
 param*1  = 2.5
 param*2= struct
 ```
-```js
+```ts
 import { parse } from 'js-ini';
 import { readTextFile } from 'async-file';
 readTextFile('configs.ini').then((txt: string) => {
@@ -142,6 +142,9 @@ Encoding params
 | **blankLine**   | `boolean` | `true`       | Add blank lines between sections      |
 | **spaceBefore** | `boolean` | `true`       | Add space between key and delimiter   |
 | **spaceAfter**  | `boolean` | `false`      | Add space between value and delimiter |
+
+## Error handling
+
 
 ## Test
 ```sh

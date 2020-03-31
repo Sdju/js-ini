@@ -94,13 +94,6 @@ const v3 = {
     'qwlfp-[weklfpowek,mf',
   ],
 };
-const v4 = {
-  section: { 
-    [1]: 'All',
-    [2]: 'in',
-    [3]: 'order.',
-  },
-};
 
 
 test('ini parsing', () => {
