@@ -25,10 +25,12 @@
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^22.2.2",
+    "@typescript-eslint/eslint-plugin": "^2.26.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-typescript": "^7.2.0",
+    "eslint-plugin-import": "^2.20.2",
     "jest": "^22.4.3",
     "ts-jest": "^22.4.2",
-    "tslint": "^5.9.1",
-    "tslint-config-airbnb": "^5.8.0",
     "typescript": "3.4.3"
   },
   "jest": {

@@ -34,12 +34,12 @@ export function stringify(data: IIniObject, params?: IStringifyConfig): string {
     while (!sectionKeys || (sectionKeys.length !== curKeyId)) {
       let curKey: string;
       if (sectionKeys) {
-        curKey = sectionKeys[ curKeyId ];
+        curKey = sectionKeys[curKeyId];
         curKeyId += 1;
       } else {
         curKey = key;
       }
-      const val = (sectionKeys) ? (<any>data[ key ])[ curKey ] : data[ curKey ];
+      const val = (sectionKeys) ? (<any>data[key])[curKey] : data[curKey];
       const valType: string = typeof val;
       if (['boolean', 'string', 'number'].includes(valType)) {
         chunks.push(formatPare(curKey, val.toString()));

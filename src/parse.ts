@@ -20,7 +20,7 @@ const autoType = (val: string): boolean | number | string => {
   if (val === '') {
     return true;
   }
-  if (!isNaN(parseFloat(val))) {
+  if (!Number.isNaN(parseFloat(val))) {
     return parseFloat(val);
   }
   return val;
@@ -75,12 +75,10 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
     const error = new ParsingError(line, lineNumber);
     if (!nothrow) {
       throw error;
+    } else if ($Errors in result) {
+      (<ParsingError[]>result[$Errors]).push(error);
     } else {
-      if ($Errors in result) {
-        (<ParsingError[]>result[$Errors]).push(error);
-      } else {
-        result[$Errors] = [error];
-      }
+      result[$Errors] = [error];
     }
   }
 

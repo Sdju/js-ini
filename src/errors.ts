@@ -7,6 +7,7 @@ export class ParsingError extends Error {
     this.lineNumber = lineNumber;
   }
 
-  line: string;
-  lineNumber: number;
+  public line: string;
+
+  public lineNumber: number;
 }
