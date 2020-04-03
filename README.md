@@ -4,11 +4,10 @@
 [![Downloads](http://img.shields.io/npm/dm/js-ini.svg?style=flat-square)](https://npmjs.org/package/js-ini)
 
 A Node.js package for encoding/decoding ini-like strings.
-## Installation 
+## Installation
 ```sh
 npm install js-ini --save
 yarn add js-ini
-bower install js-ini --save
 ```
 ## Examples
 
@@ -22,7 +21,7 @@ password type = string
 
 [Database settings]
 nodes=5
-user = admin 
+user = admin
 ; some comment
 password = some very*difficult=password:
 database-name =my-project-db
@@ -34,16 +33,16 @@ param*2= struct
 ### Javascript version
 ```javascript
 const ini = require('js-ini');
-const fs = require('async-file');
-fs.readTextFile('configs.ini').then((txt) => {
+const fs = require('fs').promises;
+fs.readFile('configs.ini', 'utf-8').then((txt) => {
   console.log(ini.parse(txt));
 });
 ```
 ### TypeScript version
 ```typescript
 import { parse } from 'js-ini';
-import { readTextFile } from 'async-file';
-readTextFile('configs.ini').then((txt: string) => {
+import { promises as fs } from 'fs';
+fs.readFile('configs.ini', 'utf-8').then((txt: string) => {
   console.log(parse(txt));
 });
 ```
@@ -85,7 +84,7 @@ Decoding params
 | **nothrow**      | `boolean`  | `false`      | Use field `Symbol('Errors of parsing')` instead `throw`                         |
 | **autoTyping**   | `boolean`  | `true`       | Try to auto translate strings to boolean / number values                        |
 | **dataSections** | `string[]` | `[]`         | Section will be marked as dataSection and will be parsed like a array of string |
- 
+
 Data section sample:
 ```ini
 option = 2
@@ -100,10 +99,10 @@ a82cfac96d9b71248bf5faa2b22d7cf7
 param*1  = 2.5
 param*2= struct
 ```
-```ts
+```typescript
 import { parse } from 'js-ini';
-import { readTextFile } from 'async-file';
-readTextFile('configs.ini').then((txt: string) => {
+import { promises as fs } from 'fs';
+fs.readFile('configs.ini', 'utf-8').then((txt: string) => {
   console.log(parse(txt, { dataSections: ['some strings'] }));
 });
 ```
