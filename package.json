@@ -14,7 +14,7 @@
   },
   "scripts": {
     "test": "jest",
-    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "lint": "eslint --cache --ext .ts src test",
     "build": "tsc"
   },
   "keywords": [
