@@ -2,29 +2,18 @@ import { $Errors, ParsingError } from './errors';
 import { IIniObject } from './interfaces/ini-object';
 import { IniValue } from './types/ini-value';
 import { IIniObjectSection } from './interfaces/ini-object-section';
+import { autoType } from './helpers/auto-type';
+import { ICustomTyping } from './interfaces/custom-typing';
 
 export interface IParseConfig {
   comment?: string;
   delimiter?: string;
   nothrow?: boolean;
-  autoTyping?: boolean;
+  autoTyping?: boolean | ICustomTyping;
   dataSections?: string[];
 }
 
 const sectionNameRegex = /\[(.*)]$/;
-
-const autoType = (val: string): boolean | number | string => {
-  if ((val === 'true') || (val === 'false')) {
-    return val === 'true';
-  }
-  if (val === '') {
-    return true;
-  }
-  if (!Number.isNaN(parseFloat(val))) {
-    return parseFloat(val);
-  }
-  return val;
-};
 
 export function parse(data: string, params?: IParseConfig): IIniObject {
   const {
@@ -34,6 +23,12 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
     autoTyping = true,
     dataSections = [],
   } = { ...params };
+  let typeParser: ICustomTyping;
+  if (typeof autoTyping === 'function') {
+    typeParser = autoTyping;
+  } else {
+    typeParser = autoTyping ? <ICustomTyping> autoType : (val) => val;
+  }
 
   const lines: string[] = data.split(/\r?\n/g);
   let lineNumber = 0;
@@ -63,7 +58,7 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
       const posOfDelimiter: number = line.indexOf(delimiter);
       const name = line.slice(0, posOfDelimiter).trim();
       const rawVal = line.slice(posOfDelimiter + 1).trim();
-      const val = (autoTyping) ? autoType(rawVal) : rawVal;
+      const val = typeParser(rawVal, currentSection, name);
       if (currentSection !== '') {
         (<IIniObjectSection>result[currentSection])[name] = val;
       } else {

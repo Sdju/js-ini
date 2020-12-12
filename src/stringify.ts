@@ -14,18 +14,19 @@ export function stringify(data: IIniObject, params?: IStringifyConfig): string {
     spaceBefore = false,
     spaceAfter = false,
   } = { ...params };
+
   const chunks: string[] = [];
   const formatPare = (key: string, val: string): string => {
-    let res: string = key;
+    let result: string = key;
     if (spaceBefore) {
-      res += ' ';
+      result += ' ';
     }
-    res += delimiter;
+    result += delimiter;
     if (spaceAfter) {
-      res += ' ';
+      result += ' ';
     }
-    res += val;
-    return res;
+    result += val;
+    return result;
   };
   let sectionKeys: string[] | null = null;
   let curKeyId: number = 0;
@@ -39,7 +40,7 @@ export function stringify(data: IIniObject, params?: IStringifyConfig): string {
       } else {
         curKey = key;
       }
-      const val = (sectionKeys) ? (<any>data[key])[curKey] : data[curKey];
+      const val: any = (sectionKeys) ? (<any>data[key])[curKey] : data[curKey];
       const valType: string = typeof val;
       if (['boolean', 'string', 'number'].includes(valType)) {
         chunks.push(formatPare(curKey, val.toString()));
