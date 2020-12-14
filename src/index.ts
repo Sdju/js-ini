@@ -71,6 +71,8 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
         if (!(currentSection in result)) {
           result[currentSection] = (isDataSection) ? [] : {};
         }
+        if (currentSection == '__proto__')
+          break;
         continue;
       }
     } else if (isDataSection) {
