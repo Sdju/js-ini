@@ -38,7 +38,7 @@
     "husky": "^4.2.3",
     "jest": "^22.4.3",
     "ts-jest": "^22.4.2",
-    "typescript": "3.4.3"
+    "typescript": "^4.1.3"
   },
   "jest": {
     "globals": {
@@ -50,7 +50,7 @@
       "^.+\\.(ts|tsx)$": "ts-jest"
     },
     "testMatch": [
-      "**/test/*.+(ts|tsx|js)"
+      "**/test/**/*.+(ts|tsx|js)"
     ],
     "moduleFileExtensions": [
       "ts",

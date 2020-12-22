@@ -1,9 +1,14 @@
-import { $Errors, ParsingError } from './errors';
+import {
+  $Errors,
+  ParsingError,
+  ProtoError,
+} from './errors';
 import { IIniObject } from './interfaces/ini-object';
 import { IniValue } from './types/ini-value';
 import { IIniObjectSection } from './interfaces/ini-object-section';
 import { autoType } from './helpers/auto-type';
 import { ICustomTyping } from './interfaces/custom-typing';
+import { $Proto } from './proto';
 
 export interface IParseConfig {
   comment?: string;
@@ -11,6 +16,7 @@ export interface IParseConfig {
   nothrow?: boolean;
   autoTyping?: boolean | ICustomTyping;
   dataSections?: string[];
+  protoSymbol?: boolean;
 }
 
 const sectionNameRegex = /\[(.*)]$/;
@@ -22,6 +28,7 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
     nothrow = false,
     autoTyping = true,
     dataSections = [],
+    protoSymbol = false,
   } = { ...params };
   let typeParser: ICustomTyping;
   if (typeof autoTyping === 'function') {
@@ -45,9 +52,16 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
       const match = line.match(sectionNameRegex);
       if (match !== null) {
         currentSection = match[1].trim();
+        if (currentSection === '__proto__') {
+          if (protoSymbol) {
+            currentSection = <string><any> $Proto;
+          } else {
+            throw new ProtoError(lineNumber);
+          }
+        }
         isDataSection = dataSections.includes(currentSection);
         if (!(currentSection in result)) {
-          result[currentSection] = (isDataSection) ? [] : {};
+          result[currentSection] = (isDataSection) ? [] : Object.create(null);
         }
         continue;
       }
