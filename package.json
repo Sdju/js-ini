@@ -1,6 +1,6 @@
 {
   "name": "js-ini",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "parsing and serialize ini files",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -27,7 +27,7 @@
     "ini",
     "parse"
   ],
-  "author": "Denis Chernov<zede@ventumit.ru>",
+  "author": "Denis Chernov<zede1697@mail.ru>",
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^22.2.2",
