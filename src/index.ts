@@ -71,8 +71,7 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
         if (!(currentSection in result)) {
           result[currentSection] = (isDataSection) ? [] : {};
         }
-        if (currentSection == '__proto__' || currentSection == 'constructor' || currentSection == 'prototype')
-          break;
+        if(isPrototypePolluted(currentSection)) break;
         continue;
       }
     } else if (isDataSection) {
@@ -166,6 +165,10 @@ export function stringify(data: IIniObject, params?: IStringifyConfig): string {
     curKeyId = 0;
   }
   return chunks.join('\n');
+}
+
+function isPrototypePolluted(key: any) {
+  return ['__proto__', 'constructor', 'prototype'].includes(key);
 }
 
 export const decode = parse;
