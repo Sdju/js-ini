@@ -81,6 +81,21 @@ only trash
 ok = value
 `;
 
+const ini8 = `
+[section]
+isTrue = true
+IsTrue = TRUE
+isFalse = false
+IsFalse = FALSE
+is5 = 5
+is5.3 = 5.3
+isIp = 128.0.0.1
+is0 = 0
+isNaN = NaN
+isNULL = null
+isUndefined =
+`;
+
 const v1 = {
   v1: 2,
   'v-2': true,
@@ -212,5 +227,24 @@ test('ini parsing: errors', () => {
         new ParsingError('trash', 4),
         new ParsingError('only trash', 7),
       ],
+    });
+});
+
+test('ini parsing: autotype', () => {
+  expect(parse(ini8, { nothrow: true, autoTyping: true }))
+    .toEqual({
+      section: {
+        isTrue: true,
+        IsTrue: true,
+        isFalse: false,
+        IsFalse: false,
+        is5: 5,
+        'is5.3': 5.3,
+        isIp: '128.0.0.1',
+        is0: 0,
+        isNaN: NaN,
+        isNULL: null,
+        isUndefined: undefined,
+      },
     });
 });

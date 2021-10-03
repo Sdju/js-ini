@@ -1,12 +1,20 @@
-export function autoType(val: string): boolean | number | string {
-  if ((val === 'true') || (val === 'false')) {
-    return val === 'true';
-  }
+export function autoType(val: string): boolean | number | string | null | undefined {
+  const valLower = val.toLowerCase();
   if (val === '') {
-    return true;
+    return undefined;
   }
-  if (!Number.isNaN(parseFloat(val))) {
+
+  if ((valLower === 'true') || (valLower === 'false')) {
+    return valLower === 'true';
+  }
+
+  if (!Number.isNaN(Number(val)) || (valLower === 'nan')) {
     return parseFloat(val);
   }
+
+  if (valLower === 'null') {
+    return null;
+  }
+
   return val;
 }
