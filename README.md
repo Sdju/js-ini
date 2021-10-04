@@ -47,26 +47,26 @@ fs.readFile('configs.ini', 'utf-8').then((txt: string) => {
 });
 ```
 **Output:**
-```JSON
+```javascript
 {
-  "option": 2,
-  "useDatabase": true,
-  "password type": "string",
-  "Database settings": {
-    "node": 5,
-    "user": "admin",
-    "password": "some very*difficult=password:"
+  'option': 2,
+  'useDatabase': true,
+  'password type': 'string',
+  'Database settings': {
+    'node': 5,
+    'user': 'admin',
+    'password': 'some very*difficult=password:'
   },
-  "User settings": {
-    "param*1": 2.5,
-    "param*2": "struct"
+  'User settings': {
+    'param*1': 2.5,
+    'param*2': 'struct'
   }
 }
 ```
 
 
 ## API
-### parse(data: string, params?: IParseConfig): object
+### parse(data: string, params?: IParseConfig): IIniObject
 **Alias:** `decode`
 #### data
 Type: `string`
@@ -82,8 +82,9 @@ Decoding params
 | **comment**      | `string`   | `;`          | String for start of comment                                                     |
 | **delimiter**    | `string`   | `=`          | Delimiter between key and value                                                 |
 | **nothrow**      | `boolean`  | `false`      | Use field `Symbol('Errors of parsing')` instead `throw`                         |
-| **autoTyping**   | `boolean`  | `true`       | Try to auto translate strings to boolean / number values                        |
+| **autoTyping**   | `boolean`  | `true`       | Try to auto translate strings to another values (translation map below)         |
 | **dataSections** | `string[]` | `[]`         | Section will be marked as dataSection and will be parsed like a array of string |
+| **protoSymbol**  | `boolean`  | `false`      | no throw on `__proto__` section and use symbol `Symbol(__proto__)` instead      |
 
 Data section sample:
 ```ini
@@ -107,24 +108,24 @@ fs.readFile('configs.ini', 'utf-8').then((txt: string) => {
 });
 ```
 Output:
-```json
+```javascript
 {
-  "option": 2,
-  "useDatabase": true,
-  "password type": "string",
-  "some strings": [
-  	"a82cfac96d9b71248bf5faa2b22d7cf7",
-  	"0c420a02dc13656d15aefe71e5b06ecf"
+  'option': 2,
+  'useDatabase': true,
+  'password type': "string",
+  'some strings':
+    'a82cfac96d9b71248bf5faa2b22d7cf7',
+    '0c420a02dc13656d15aefe71e5b06ecf'
   ],
-  "User settings": {
-    "param*1": 2.5,
-    "param*2": "struct"
+  'User settings': {
+    'param*1': 2.5,
+    'param*2': 'struct'
   }
 }
 ```
 
 
-### stringify(data: object, params?: IStringifyConfig): string
+### stringify(data: IIniObject, params?: IStringifyConfig): string
 **Alias:** `encode`
 #### data
 Type: `object`
@@ -142,7 +143,86 @@ Encoding params
 | **spaceBefore** | `boolean` | `true`       | Add space between key and delimiter   |
 | **spaceAfter**  | `boolean` | `false`      | Add space between value and delimiter |
 
-## Error handling
+### $Errors
+It is `Symbol('Errors of parsing')` for `nothrow` option
+
+####Example:
+**configs.ini**
+```ini
+[scope with trash]
+ok = value
+trash
+[scope with only trash]
+only trash
+[normal scope]
+ok = value
+```
+
+```javascript
+const ini = require('js-ini');
+const fs = require('fs').promises;
+fs.readFile('configs.ini', 'utf-8').then((txt) => {
+  console.log(ini.parse(txt));
+});
+```
+**Output:**
+```javascript
+{
+  'scope with trash': {
+    'ok': 'value',
+  },
+  'empty scope': {},
+  'normal scope': {
+    ok: 'value',
+  },
+  Symbol('Errors of parsing'): [
+    new ParsingError('trash', 3),
+    new ParsingError('only trash', 7),
+  ]
+}
+```
+
+### $Proto
+It is `Symbol(__proto__)` for `protoSymbol` option
+
+## Translation map for autoType
+|      value      | to              |
+|-----------------|-----------------|
+| `true`/`false`  | `true`/`false`  |
+| `0`/`5.5`/`nan` | `0`/`5.5`/`NaN` |
+| blank value     | `undefined`     |
+| `null`          | `null`          |
+| `12.4abc`       | `'12.4abc'`     |
+* Translating is case-insensitive
+* Other values will be translated to padded strings
+
+## Additional tools
+The library is provided with simple helpers that should help decrease size of boilerplate.
+Tools are divided into separated files which are not included to the default export
+
+### readIniFile(path: string, params?: IParseConfig): Promise\<IIniObject\>
+`readIniFile` reads `path` file and parses it
+#### Usage
+```typescript
+import { readIniFile } from './tools/read-ini'
+
+await readIniFile('./mydir/example.ini', { nothrow: true })
+```
+
+
+### writeIniFile(path: string, params?: IParseConfig): Promise\<IIniObject\>
+`writeIniFile` translate `ini` object to ini-like string
+#### Usage
+```typescript
+import { readIniFile } from './tools/read-ini'
+
+await writeIniFile('./mydir/example.ini', {
+  server: {
+    IP: '127.0.0.1'
+    user: 'Smith'
+  }
+}, { nothrow: true })
+```
 
 
 ## Test
