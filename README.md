@@ -146,7 +146,7 @@ Encoding params
 ### $Errors
 It is `Symbol('Errors of parsing')` for `nothrow` option
 
-####Example:
+#### Example:
 **configs.ini**
 ```ini
 [scope with trash]
@@ -198,13 +198,13 @@ It is `Symbol(__proto__)` for `protoSymbol` option
 
 ## Additional tools
 The library is provided with simple helpers that should help decrease size of boilerplate.
-Tools are divided into separated files which are not included to the default export
+Tools are divided into separated files which are not included to the default export.
 
 ### readIniFile(path: string, params?: IParseConfig): Promise\<IIniObject\>
 `readIniFile` reads `path` file and parses it
 #### Usage
 ```typescript
-import { readIniFile } from './tools/read-ini'
+import { readIniFile } from 'js-ini/tools/read-ini'
 
 await readIniFile('./mydir/example.ini', { nothrow: true })
 ```
@@ -214,7 +214,7 @@ await readIniFile('./mydir/example.ini', { nothrow: true })
 `writeIniFile` translate `ini` object to ini-like string
 #### Usage
 ```typescript
-import { readIniFile } from './tools/read-ini'
+import { writeIniFile } from 'js-ini/tools/write-ini'
 
 await writeIniFile('./mydir/example.ini', {
   server: {
