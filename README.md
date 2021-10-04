@@ -66,7 +66,7 @@ fs.readFile('configs.ini', 'utf-8').then((txt: string) => {
 
 
 ## API
-### parse(data: string, params?: IParseConfig): object
+### parse(data: string, params?: IParseConfig): IIniObject
 **Alias:** `decode`
 #### data
 Type: `string`
@@ -125,7 +125,7 @@ Output:
 ```
 
 
-### stringify(data: object, params?: IStringifyConfig): string
+### stringify(data: IIniObject, params?: IStringifyConfig): string
 **Alias:** `encode`
 #### data
 Type: `object`
@@ -193,11 +193,36 @@ It is `Symbol(__proto__)` for `protoSymbol` option
 | blank value     | `undefined`     |
 | `null`          | `null`          |
 | `12.4abc`       | `'12.4abc'`     |
-Translating is case-insensitive
-Others values will be translated to padded strings
-Strings such as `'12.4abc''` will be recognized as a string
+* Translating is case-insensitive
+* Other values will be translated to padded strings
 
-## Error handling
+## Additional tools
+The library is provided with simple helpers that should help decrease size of boilerplate.
+Tools are divided into separated files which are not included to the default export
+
+### readIniFile(path: string, params?: IParseConfig): Promise\<IIniObject\>
+`readIniFile` reads `path` file and parses it
+#### Usage
+```typescript
+import { readIniFile } from './tools/read-ini'
+
+await readIniFile('./mydir/example.ini', { nothrow: true })
+```
+
+
+### writeIniFile(path: string, params?: IParseConfig): Promise\<IIniObject\>
+`writeIniFile` translate `ini` object to ini-like string
+#### Usage
+```typescript
+import { readIniFile } from './tools/read-ini'
+
+await writeIniFile('./mydir/example.ini', {
+  server: {
+    IP: '127.0.0.1'
+    user: 'Smith'
+  }
+}, { nothrow: true })
+```
 
 
 ## Test
