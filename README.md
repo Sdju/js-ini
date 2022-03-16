@@ -79,7 +79,7 @@ Decoding params
 
 |      name        | type       | defaut value |            description                                                          |
 |------------------|------------|--------------|---------------------------------------------------------------------------------|
-| **comment**      | `string`   | `;`          | String for start of comment                                                     |
+| **comment**      | `string \| string[]` | `;` | String for start of comment                                                     |
 | **delimiter**    | `string`   | `=`          | Delimiter between key and value                                                 |
 | **nothrow**      | `boolean`  | `false`      | Use field `Symbol('Errors of parsing')` instead `throw`                         |
 | **autoTyping**   | `boolean`  | `true`       | Try to auto translate strings to another values (translation map below)         |

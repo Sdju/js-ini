@@ -11,7 +11,7 @@ import { ICustomTyping } from './interfaces/custom-typing';
 import { $Proto } from './proto';
 
 export interface IParseConfig {
-  comment?: string;
+  comment?: string | string[];
   delimiter?: string;
   nothrow?: boolean;
   autoTyping?: boolean | ICustomTyping;
@@ -42,11 +42,12 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
   let currentSection: string = '';
   let isDataSection: boolean = false;
   const result: IIniObject = {};
+  const commentChars: string[] = Array.isArray(comment) ? comment : [comment];
 
   for (const rawLine of lines) {
     lineNumber += 1;
     const line: string = rawLine.trim();
-    if ((line.length === 0) || (line.startsWith(comment))) {
+    if ((line.length === 0) || commentChars.some((char) => line.startsWith(char))) {
       continue;
     } else if (line[0] === '[') {
       const match = line.match(sectionNameRegex);
