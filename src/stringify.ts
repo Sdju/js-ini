@@ -5,6 +5,7 @@ export interface IStringifyConfig {
   blankLine?: boolean;
   spaceBefore?: boolean;
   spaceAfter?: boolean;
+  skipUndefined?: boolean;
 }
 
 export function stringify(data: IIniObject, params?: IStringifyConfig): string {
@@ -13,6 +14,7 @@ export function stringify(data: IIniObject, params?: IStringifyConfig): string {
     blankLine = true,
     spaceBefore = false,
     spaceAfter = false,
+    skipUndefined = false,
   } = { ...params };
 
   const chunks: string[] = [];
@@ -62,6 +64,8 @@ export function stringify(data: IIniObject, params?: IStringifyConfig): string {
         } else {
           sectionKeys = Object.keys(val);
         }
+      } else if (typeof val === 'undefined' && !skipUndefined) {
+        chunks.push(formatPare(curKey, ''));
       }
     }
     sectionKeys = null;

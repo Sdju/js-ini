@@ -136,12 +136,13 @@ Type: `IStringifyConfig`
 
 Encoding params
 
-|      name       | type      | defaut value |            description                |
-|-----------------|-----------|--------------|---------------------------------------|
-| **delimiter**   | `string`  | `=`          | Delimiter between key and value       |
-| **blankLine**   | `boolean` | `true`       | Add blank lines between sections      |
-| **spaceBefore** | `boolean` | `true`       | Add space between key and delimiter   |
-| **spaceAfter**  | `boolean` | `false`      | Add space between value and delimiter |
+| name              | type      | default value | description                           |
+|-------------------|-----------|---------------|---------------------------------------|
+| **delimiter**     | `string`  | `=`           | Delimiter between key and value       |
+| **blankLine**     | `boolean` | `true`        | Add blank lines between sections      |
+| **spaceBefore**   | `boolean` | `true`        | Add space between key and delimiter   |
+| **spaceAfter**    | `boolean` | `false`       | Add space between value and delimiter |
+| **skipUndefined** | `boolean` | `false`       | Don't print keys with undefined value |
 
 ### $Errors
 It is `Symbol('Errors of parsing')` for `nothrow` option

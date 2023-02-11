@@ -111,6 +111,27 @@ v5 : who is who = who
 [test scope with spaces]
 mgm*1  : 2.5`;
 
+const ini10 = `
+[exports]
+NEW!=NOVO!
+Press Start For Options=Aperte &START; de novo para opções
+Start To Join=Aperte &START; para entrar
+Entering Options=Entrando no menu de opções...
+HelpText=&BACK; Sair  &START; Selecionar / Entrar &MENULEFT;&MENURIGHT; Mover :: &MENUUP;&MENUUP;/&MENUDOWN;&MENUDOWN; Mudar dificuldade   &SELECT; (hold) Atalhos
+AlternateHelpText=&SELECT;+&MENULEFT;&MENURIGHT; Mudar dificuldade &SELECT;+&START; Mudar ordenação
+HeaderSubText=
+SortLabel=Filtro
+SpeedLabel=Velocidade
+LengthLabel=Duração
+StageLabel=Estágio
+LongSong=Música Longa
+MarathonSong=Maratona
+ChartStats=Chart Info
+NoAuthor=N/A
+HighScore=Pontuação Alta
+ChangeDifficulty=&MENULEFT;&MENURIGHT; Mudar dificuldade
+ChangeSort=&START; Mudar ordenação`;
+
 const v1 = {
   v1: 2,
   'v-2': true,
@@ -265,5 +286,12 @@ describe('base js-ini test', () => {
           isUndefined: undefined,
         },
       });
+  });
+
+  it('ini parsing: infinity fix test', () => {
+    const result = parse(ini10);
+    stringify(result);
+
+    expect(stringify(result)).toEqual(ini10);
   });
 });
