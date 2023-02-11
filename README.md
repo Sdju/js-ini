@@ -77,14 +77,14 @@ Type: `IParseConfig`
 
 Decoding params
 
-|      name        | type       | defaut value |            description                                                          |
-|------------------|------------|--------------|---------------------------------------------------------------------------------|
-| **comment**      | `string \| string[]` | `;` | String for start of comment                                                     |
-| **delimiter**    | `string`   | `=`          | Delimiter between key and value                                                 |
-| **nothrow**      | `boolean`  | `false`      | Use field `Symbol('Errors of parsing')` instead `throw`                         |
-| **autoTyping**   | `boolean`  | `true`       | Try to auto translate strings to another values (translation map below)         |
-| **dataSections** | `string[]` | `[]`         | Section will be marked as dataSection and will be parsed like a array of string |
-| **protoSymbol**  | `boolean`  | `false`      | no throw on `__proto__` section and use symbol `Symbol(__proto__)` instead      |
+|      name        | type       | defaut value   |            description                                                          |
+|------------------|------------|----------------|---------------------------------------------------------------------------------|
+| **comment**      | `string \| string[]`      | `;` | String for start of comment                                                 |
+| **delimiter**    | `string`   | `=`            | Delimiter between key and value                                                 |
+| **nothrow**      | `boolean`  | `false`        | Use field `Symbol('Errors of parsing')` instead `throw`                         |
+| **autoTyping**   | `boolean`  | `true`         | Try to auto translate strings to another values (translation map below)         |
+| **dataSections** | `string[]` | `[]`           | Section will be marked as dataSection and will be parsed like a array of string |
+| **protoSymbol**  | `boolean`  | `false`        | no throw on `__proto__` section and use symbol `Symbol(__proto__)` instead      |
 
 Data section sample:
 ```ini
@@ -186,13 +186,14 @@ fs.readFile('configs.ini', 'utf-8').then((txt) => {
 It is `Symbol(__proto__)` for `protoSymbol` option
 
 ## Translation map for autoType
-|      value      | to              |
+| value           | to              |
 |-----------------|-----------------|
 | `true`/`false`  | `true`/`false`  |
 | `0`/`5.5`/`nan` | `0`/`5.5`/`NaN` |
 | blank value     | `undefined`     |
 | `null`          | `null`          |
 | `12.4abc`       | `'12.4abc'`     |
+| `0xFF66AA`      | `16737962`      |
 * Translating is case-insensitive
 * Other values will be translated to padded strings
 
@@ -218,7 +219,7 @@ import { writeIniFile } from 'js-ini/tools/write-ini'
 
 await writeIniFile('./mydir/example.ini', {
   server: {
-    IP: '127.0.0.1'
+    IP: '127.0.0.1',
     user: 'Smith'
   }
 }, { nothrow: true })
