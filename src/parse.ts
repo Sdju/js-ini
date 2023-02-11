@@ -34,7 +34,7 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
   if (typeof autoTyping === 'function') {
     typeParser = autoTyping;
   } else {
-    typeParser = autoTyping ? <ICustomTyping> autoType : (val) => val;
+    typeParser = autoTyping ? autoType : (val) => val;
   }
 
   const lines: string[] = data.split(/\r?\n/g);
@@ -55,7 +55,7 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
         currentSection = match[1].trim();
         if (currentSection === '__proto__') {
           if (protoSymbol) {
-            currentSection = <string><any> $Proto;
+            currentSection = $Proto as unknown as string;
           } else {
             throw new ProtoError(lineNumber);
           }
@@ -67,7 +67,7 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
         continue;
       }
     } else if (isDataSection) {
-      (<IniValue[]>result[currentSection]).push(rawLine);
+      (result[currentSection] as IniValue[]).push(rawLine);
       continue;
     } else if (line.includes(delimiter)) {
       const posOfDelimiter: number = line.indexOf(delimiter);
@@ -75,7 +75,7 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
       const rawVal = line.slice(posOfDelimiter + 1).trim();
       const val = typeParser(rawVal, currentSection, name);
       if (currentSection !== '') {
-        (<IIniObjectSection>result[currentSection])[name] = val;
+        (result[currentSection] as IIniObjectSection)[name] = val;
       } else {
         result[name] = val;
       }
@@ -86,7 +86,7 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
     if (!nothrow) {
       throw error;
     } else if ($Errors in result) {
-      (<ParsingError[]>result[$Errors]).push(error);
+      (result[$Errors] as ParsingError[]).push(error);
     } else {
       result[$Errors] = [error];
     }

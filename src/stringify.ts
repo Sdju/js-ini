@@ -42,7 +42,7 @@ export function stringify(data: IIniObject, params?: IStringifyConfig): string {
       } else {
         curKey = key;
       }
-      const val: any = (sectionKeys) ? (<any>data[key])[curKey] : data[curKey];
+      const val: any = (sectionKeys) ? (data[key] as any)[curKey] : data[curKey];
       const valType: string = typeof val;
       if (['boolean', 'string', 'number'].includes(valType)) {
         chunks.push(formatPare(curKey, val.toString()));
