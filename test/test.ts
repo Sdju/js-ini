@@ -93,6 +93,7 @@ isIp = 128.0.0.1
 is0 = 0
 isNaN = NaN
 isNULL = null
+isHex = 0xFf0066
 isUndefined =
 `;
 
@@ -253,6 +254,7 @@ test('ini parsing: autotype', () => {
         IsTrue: true,
         isFalse: false,
         IsFalse: false,
+        isHex: 0xFf0066,
         is5: 5,
         'is5.3': 5.3,
         isIp: '128.0.0.1',

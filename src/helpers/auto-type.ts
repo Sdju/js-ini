@@ -1,15 +1,16 @@
 export function autoType(val: string): boolean | number | string | null | undefined {
-  const valLower = val.toLowerCase();
   if (val === '') {
     return undefined;
   }
 
-  if ((valLower === 'true') || (valLower === 'false')) {
+  const valLower = val.toLowerCase();
+  const isTrue = valLower === 'true';
+  if (isTrue || (valLower === 'false')) {
     return valLower === 'true';
   }
 
   if (!Number.isNaN(Number(val)) || (valLower === 'nan')) {
-    return parseFloat(val);
+    return Number(val);
   }
 
   if (valLower === 'null') {
