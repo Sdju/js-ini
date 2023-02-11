@@ -10,11 +10,21 @@ import { autoType } from './helpers/auto-type';
 import { ICustomTyping } from './interfaces/custom-typing';
 import { $Proto } from './proto';
 
+export const KeyMergeStrategies = {
+  OVERRIDE: 'override',
+  JOIN_TO_ARRAY: 'join-to-array',
+} as const;
+export type KeyMergeStrategyName = typeof KeyMergeStrategies[keyof typeof KeyMergeStrategies];
+
+export type KeyMergeStrategyFunction =
+  (section: IIniObjectSection, name: string, value: any) => void;
+
 export interface IParseConfig {
   comment?: string | string[];
   delimiter?: string;
   nothrow?: boolean;
   autoTyping?: boolean | ICustomTyping;
+  keyMergeStrategy?: KeyMergeStrategyName | KeyMergeStrategyFunction;
   dataSections?: string[];
   protoSymbol?: boolean;
 }
@@ -29,6 +39,7 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
     autoTyping = true,
     dataSections = [],
     protoSymbol = false,
+    keyMergeStrategy = KeyMergeStrategies.OVERRIDE,
   } = { ...params };
   let typeParser: ICustomTyping;
   if (typeof autoTyping === 'function') {
@@ -36,6 +47,13 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
   } else {
     typeParser = autoTyping ? autoType : (val) => val;
   }
+
+  const isOverrideStrategy = keyMergeStrategy === KeyMergeStrategies.OVERRIDE;
+  const isJoinStrategy = !isOverrideStrategy
+    && (keyMergeStrategy === KeyMergeStrategies.JOIN_TO_ARRAY);
+  const isCustomStrategy = !isOverrideStrategy
+    && !isJoinStrategy
+    && typeof keyMergeStrategy === 'function';
 
   const lines: string[] = data.split(/\r?\n/g);
   let lineNumber = 0;
@@ -74,10 +92,22 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
       const name = line.slice(0, posOfDelimiter).trim();
       const rawVal = line.slice(posOfDelimiter + 1).trim();
       const val = typeParser(rawVal, currentSection, name);
-      if (currentSection !== '') {
-        (result[currentSection] as IIniObjectSection)[name] = val;
-      } else {
-        result[name] = val;
+      const section = (currentSection !== '') ? (result[currentSection] as IIniObjectSection) : result;
+      if (isOverrideStrategy) {
+        section[name] = val;
+      } else if (isJoinStrategy) {
+        if (name in section) {
+          const oldVal = section[name];
+          if (Array.isArray(oldVal)) {
+            oldVal.push(val);
+          } else {
+            section[name] = [oldVal, val];
+          }
+        } else {
+          section[name] = val;
+        }
+      } else if (isCustomStrategy) {
+        keyMergeStrategy(section, name, val);
       }
       continue;
     }

@@ -6,6 +6,7 @@ import {
   $Errors,
   ParsingError,
 } from '../src';
+import type { IIniObjectSection } from '../src/interfaces/ini-object-section';
 
 const ini1 = `v1 = 2
 v-2=true
@@ -131,6 +132,22 @@ NoAuthor=N/A
 HighScore=Pontuação Alta
 ChangeDifficulty=&MENULEFT;&MENURIGHT; Mudar dificuldade
 ChangeSort=&START; Mudar ordenação`;
+
+const ini11 = `
+value = 1
+value = 2
+value = 3
+second = 1
+second = 2
+another = 1
+
+[test]
+value = 1
+value = 2
+value = 3
+second = 1
+second = 2
+another = 1`;
 
 const v1 = {
   v1: 2,
@@ -288,10 +305,51 @@ describe('base js-ini test', () => {
       });
   });
 
-  it('ini parsing: infinity fix test', () => {
+  it('ini stringify: infinity fix test', () => {
     const result = parse(ini10);
     stringify(result);
 
     expect(stringify(result)).toEqual(ini10);
+  });
+
+  it('ini parsing: merge strategies', () => {
+    expect(parse(ini11)).toEqual({
+      value: 3,
+      second: 2,
+      another: 1,
+      test: {
+        value: 3,
+        second: 2,
+        another: 1,
+      },
+    });
+
+    const result = parse(ini11, { keyMergeStrategy: 'join-to-array' });
+    expect(result, 'join-to-array failed').toEqual({
+      value: [1, 2, 3],
+      second: [1, 2],
+      another: 1,
+      test: {
+        value: [1, 2, 3],
+        second: [1, 2],
+        another: 1,
+      },
+    });
+
+    const customMergeStrategy = (section: IIniObjectSection, name: string, val: any) => {
+      // eslint-disable-next-line no-param-reassign
+      section[name] = name in section ? `${section[name]}|${val.toString()}` : val.toString();
+    };
+    const result2 = parse(ini11, { keyMergeStrategy: customMergeStrategy });
+    expect(result2, 'custom merge failed').toEqual({
+      value: '1|2|3',
+      second: '1|2',
+      another: '1',
+      test: {
+        value: '1|2|3',
+        second: '1|2',
+        another: '1',
+      },
+    });
   });
 });

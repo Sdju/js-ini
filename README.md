@@ -77,14 +77,15 @@ Type: `IParseConfig`
 
 Decoding params
 
-|      name        | type       | defaut value   |            description                                                          |
-|------------------|------------|----------------|---------------------------------------------------------------------------------|
-| **comment**      | `string \| string[]`      | `;` | String for start of comment                                                 |
-| **delimiter**    | `string`   | `=`            | Delimiter between key and value                                                 |
-| **nothrow**      | `boolean`  | `false`        | Use field `Symbol('Errors of parsing')` instead `throw`                         |
-| **autoTyping**   | `boolean`  | `true`         | Try to auto translate strings to another values (translation map below)         |
-| **dataSections** | `string[]` | `[]`           | Section will be marked as dataSection and will be parsed like a array of string |
-| **protoSymbol**  | `boolean`  | `false`        | no throw on `__proto__` section and use symbol `Symbol(__proto__)` instead      |
+| name                 | type                  | defaut value | description                                                                     |
+|----------------------|-----------------------|--------------|---------------------------------------------------------------------------------|
+| **comment**          | `string or string[]`  | `;`          | String for start of comment                                                     |
+| **delimiter**        | `string`              | `=`          | Delimiter between key and value                                                 |
+| **nothrow**          | `boolean`             | `false`      | Use field `Symbol('Errors of parsing')` instead `throw`                         |
+| **autoTyping**       | `boolean or function` | `true`       | Try to auto translate strings to another values (translation map below)         |
+| **keyMergeStrategy** | `string or function`  | `true`       | Strategy that will be used for equal keys                                       |
+| **dataSections**     | `string[]`            | `[]`         | Section will be marked as dataSection and will be parsed like a array of string |
+| **protoSymbol**      | `boolean`             | `false`      | no throw on `__proto__` section and use symbol `Symbol(__proto__)` instead      |
 
 Data section sample:
 ```ini
@@ -197,6 +198,66 @@ It is `Symbol(__proto__)` for `protoSymbol` option
 | `0xFF66AA`      | `16737962`      |
 * Translating is case-insensitive
 * Other values will be translated to padded strings
+
+## Key Merge Strategies
+There are 3 ways of resolving equal keys conflict:
+
+| strategy name                    | const or type            | description                                        |
+|----------------------------------|--------------------------|----------------------------------------------------|
+| KeyMergeStrategies.OVERRIDE      | 'override'               | result value will be equal to the last value       |
+| KeyMergeStrategies.JOIN_TO_ARRAY | 'join-to-array'          | result will be equal to array with all values      |
+| custom function                  | KeyMergeStrategyFunction | your own conflict resolver (example will be below) |
+
+```typescript
+const ini = `[test]
+value = 1
+value = 2
+value = 3
+second = 1
+second = 2
+another = 1`
+
+console.log(parse(ini, { keyMergeStrategy: KeyMergeStrategies.OVERRIDE }));
+/*
+    {
+      test: {
+        value: 3,
+        second: 2,
+        another: 1
+      }
+    }
+*/
+
+console.log(parse(ini, { keyMergeStrategy: KeyMergeStrategies.JOIN_TO_ARRAY }));
+/*
+    {
+      test: {
+        value: [1, 2, 3],
+        second: [1, 2],
+        another: 1
+      }
+    }
+*/
+
+// section - section object for merging
+// name - section key name
+// val - value for merging
+const customMergeStrategy = (section: IIniObjectSection, name: string, val: any) => {
+  section[name] = name in section ? `${section[name]}|${val.toString()}` : val.toString();
+};
+console.log(parse(ini, { keyMergeStrategy: customMergeStrategy }));
+/*
+    {
+      test: {
+        value: '1|2|3',
+        second: '1|2',
+        another: '1'
+      }
+    }
+*/
+```
+
+
 
 ## Additional tools
 The library is provided with simple helpers that should help decrease size of boilerplate.
