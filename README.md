@@ -187,6 +187,28 @@ fs.readFile('configs.ini', 'utf-8').then((txt) => {
 ### $Proto
 It is `Symbol(__proto__)` for `protoSymbol` option
 
+## Ini-like files
+With this library you can parse/generate for different ini-like strings. e.g. with `:` as separator and `#` as comment. Example of unusual syntax
+```typescript
+const iniLike = `[data]
+password:qwnfjfwqknjslfmbn
+name:John Doe
+# usual comment
+`;
+console.log(parse(ini, {
+  comment: '#',
+  delimiter: ':'
+}));
+/*
+    {
+      data: {
+        password: 'qwnfjfwqknjslfmbn',
+        name: 'John Doe'
+      }
+    }
+*/
+```
+
 ## Translation map for autoType
 | value           | to              |
 |-----------------|-----------------|
@@ -198,6 +220,48 @@ It is `Symbol(__proto__)` for `protoSymbol` option
 | `0xFF66AA`      | `16737962`      |
 * Translating is case-insensitive
 * Other values will be translated to padded strings
+
+## custom autoType
+You can provide your own "auto typer". It's possible to change your parsing logic depends on current section and key
+```typescript
+interface ICustomTyping {
+  (val: string, section: string | symbol, key: string): any
+}
+```
+| argument | value              |
+|----------|--------------------|
+| val      | string for parsing |
+| section  | section object     |
+| key      | section key        |
+
+Example:
+```typescript
+const ini = `
+license=MIT
+[config]
+version=24
+date=12.04.2017`;
+
+const customParser = (val: string, section: string, key: string) => {
+    if (section !== 'config') {
+        return val
+    }
+    if (key === 'date') {
+        return new Date(key)
+    }
+    return Number(val)
+};
+console.log(parse(ini, { autoTyping: customParser }));
+/*
+    {
+      license: "MIT",
+      config: {
+        version: 24
+        date: Mon Dec 04 2017...
+      }
+    }
+*/
+```
 
 ## Key Merge Strategies
 There are 3 ways of resolving equal keys conflict:
@@ -215,7 +279,7 @@ value = 2
 value = 3
 second = 1
 second = 2
-another = 1`
+another = 1`;
 
 console.log(parse(ini, { keyMergeStrategy: KeyMergeStrategies.OVERRIDE }));
 /*

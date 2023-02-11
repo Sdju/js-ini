@@ -6,7 +6,7 @@ import {
   $Errors,
   ParsingError,
 } from '../src';
-import type { IIniObjectSection } from '../src/interfaces/ini-object-section';
+import type { IIniObjectSection } from '../src';
 
 const ini1 = `v1 = 2
 v-2=true
