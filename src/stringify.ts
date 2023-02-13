@@ -19,7 +19,7 @@ export function stringify(data: IIniObject, params?: IStringifyConfig): string {
 
   const chunks: string[] = [];
   const formatPare = (key: string, val: string): string => {
-    let result: string = key;
+    let result = key;
     if (spaceBefore) {
       result += ' ';
     }
@@ -43,7 +43,7 @@ export function stringify(data: IIniObject, params?: IStringifyConfig): string {
         curKey = key;
       }
       const val: any = (sectionKeys) ? (data[key] as any)[curKey] : data[curKey];
-      const valType: string = typeof val;
+      const valType = typeof val;
       if (['boolean', 'string', 'number'].includes(valType)) {
         chunks.push(formatPare(curKey, val.toString()));
         if (!sectionKeys) {

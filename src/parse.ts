@@ -57,10 +57,10 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
 
   const lines: string[] = data.split(/\r?\n/g);
   let lineNumber = 0;
-  let currentSection: string = '';
-  let isDataSection: boolean = false;
+  let currentSection = '';
+  let isDataSection = false;
   const result: IIniObject = {};
-  const commentChars: string[] = Array.isArray(comment) ? comment : [comment];
+  const commentChars = Array.isArray(comment) ? comment : [comment];
 
   for (const rawLine of lines) {
     lineNumber += 1;
@@ -69,7 +69,7 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
       continue;
     } else if (line[0] === '[') {
       const match = line.match(sectionNameRegex);
-      if (match !== null) {
+      if (match) {
         currentSection = match[1].trim();
         if (currentSection === '__proto__') {
           if (protoSymbol) {
@@ -88,7 +88,7 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
       (result[currentSection] as IniValue[]).push(rawLine);
       continue;
     } else if (line.includes(delimiter)) {
-      const posOfDelimiter: number = line.indexOf(delimiter);
+      const posOfDelimiter = line.indexOf(delimiter);
       const name = line.slice(0, posOfDelimiter).trim();
       const rawVal = line.slice(posOfDelimiter + 1).trim();
       const val = typeParser(rawVal, currentSection, name);
