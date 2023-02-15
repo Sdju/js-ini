@@ -16,7 +16,7 @@
     "test": "vitest run",
     "test-watch": "vitest",
     "lint": "eslint --cache --ext .ts src test",
-    "build": "tsc",
+    "build": "tsc -p ./tsconfig.min.json && esbuild \"./dist/index.js\" --minify --outfile=\"dist/index.min.js\"",
     "publish": "npm run lint && npm run test && npm run build && npm publish"
   },
   "husky": {
@@ -33,6 +33,7 @@
   "devDependencies": {
     "@types/node": "^18.13.0",
     "@typescript-eslint/eslint-plugin": "^2.26.0",
+    "esbuild": "^0.17.8",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-typescript": "^7.2.0",
     "eslint-plugin-import": "^2.20.2",
