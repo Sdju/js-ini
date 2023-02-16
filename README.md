@@ -77,14 +77,15 @@ Type: `IParseConfig`
 
 Decoding params
 
-|      name        | type       | defaut value |            description                                                          |
-|------------------|------------|--------------|---------------------------------------------------------------------------------|
-| **comment**      | `string \| string[]` | `;` | String for start of comment                                                     |
-| **delimiter**    | `string`   | `=`          | Delimiter between key and value                                                 |
-| **nothrow**      | `boolean`  | `false`      | Use field `Symbol('Errors of parsing')` instead `throw`                         |
-| **autoTyping**   | `boolean`  | `true`       | Try to auto translate strings to another values (translation map below)         |
-| **dataSections** | `string[]` | `[]`         | Section will be marked as dataSection and will be parsed like a array of string |
-| **protoSymbol**  | `boolean`  | `false`      | no throw on `__proto__` section and use symbol `Symbol(__proto__)` instead      |
+| name                 | type                  | defaut value | description                                                                     |
+|----------------------|-----------------------|--------------|---------------------------------------------------------------------------------|
+| **comment**          | `string or string[]`  | `;`          | String for start of comment                                                     |
+| **delimiter**        | `string`              | `=`          | Delimiter between key and value                                                 |
+| **nothrow**          | `boolean`             | `false`      | Use field `Symbol('Errors of parsing')` instead `throw`                         |
+| **autoTyping**       | `boolean or function` | `true`       | Try to auto translate strings to another values (translation map below)         |
+| **keyMergeStrategy** | `string or function`  | `true`       | Strategy that will be used for equal keys                                       |
+| **dataSections**     | `string[]`            | `[]`         | Section will be marked as dataSection and will be parsed like a array of string |
+| **protoSymbol**      | `boolean`             | `false`      | no throw on `__proto__` section and use symbol `Symbol(__proto__)` instead      |
 
 Data section sample:
 ```ini
@@ -136,12 +137,13 @@ Type: `IStringifyConfig`
 
 Encoding params
 
-|      name       | type      | defaut value |            description                |
-|-----------------|-----------|--------------|---------------------------------------|
-| **delimiter**   | `string`  | `=`          | Delimiter between key and value       |
-| **blankLine**   | `boolean` | `true`       | Add blank lines between sections      |
-| **spaceBefore** | `boolean` | `true`       | Add space between key and delimiter   |
-| **spaceAfter**  | `boolean` | `false`      | Add space between value and delimiter |
+| name              | type      | default value | description                           |
+|-------------------|-----------|---------------|---------------------------------------|
+| **delimiter**     | `string`  | `=`           | Delimiter between key and value       |
+| **blankLine**     | `boolean` | `true`        | Add blank lines between sections      |
+| **spaceBefore**   | `boolean` | `true`        | Add space between key and delimiter   |
+| **spaceAfter**    | `boolean` | `false`       | Add space between value and delimiter |
+| **skipUndefined** | `boolean` | `false`       | Don't print keys with undefined value |
 
 ### $Errors
 It is `Symbol('Errors of parsing')` for `nothrow` option
@@ -185,16 +187,141 @@ fs.readFile('configs.ini', 'utf-8').then((txt) => {
 ### $Proto
 It is `Symbol(__proto__)` for `protoSymbol` option
 
+## Ini-like files
+With this library you can parse/generate for different ini-like strings. e.g. with `:` as separator and `#` as comment. Example of unusual syntax
+```typescript
+const iniLike = `[data]
+password:qwnfjfwqknjslfmbn
+name:John Doe
+# usual comment
+`;
+console.log(parse(ini, {
+  comment: '#',
+  delimiter: ':'
+}));
+/*
+    {
+      data: {
+        password: 'qwnfjfwqknjslfmbn',
+        name: 'John Doe'
+      }
+    }
+*/
+```
+
 ## Translation map for autoType
-|      value      | to              |
+| value           | to              |
 |-----------------|-----------------|
 | `true`/`false`  | `true`/`false`  |
 | `0`/`5.5`/`nan` | `0`/`5.5`/`NaN` |
 | blank value     | `undefined`     |
 | `null`          | `null`          |
 | `12.4abc`       | `'12.4abc'`     |
+| `0xFF66AA`      | `16737962`      |
 * Translating is case-insensitive
 * Other values will be translated to padded strings
+
+## custom autoType
+You can provide your own "auto typer". It's possible to change your parsing logic depends on current section and key
+```typescript
+interface ICustomTyping {
+  (val: string, section: string | symbol, key: string): any
+}
+```
+| argument | value              |
+|----------|--------------------|
+| val      | string for parsing |
+| section  | section object     |
+| key      | section key        |
+
+Example:
+```typescript
+const ini = `
+license=MIT
+[config]
+version=24
+date=12.04.2017`;
+
+const customParser = (val: string, section: string, key: string) => {
+    if (section !== 'config') {
+        return val
+    }
+    if (key === 'date') {
+        return new Date(key)
+    }
+    return Number(val)
+};
+console.log(parse(ini, { autoTyping: customParser }));
+/*
+    {
+      license: "MIT",
+      config: {
+        version: 24
+        date: Mon Dec 04 2017...
+      }
+    }
+*/
+```
+
+## Key Merge Strategies
+There are 3 ways of resolving equal keys conflict:
+
+| strategy name                    | const or type            | description                                        |
+|----------------------------------|--------------------------|----------------------------------------------------|
+| KeyMergeStrategies.OVERRIDE      | 'override'               | result value will be equal to the last value       |
+| KeyMergeStrategies.JOIN_TO_ARRAY | 'join-to-array'          | result will be equal to array with all values      |
+| custom function                  | KeyMergeStrategyFunction | your own conflict resolver (example will be below) |
+
+```typescript
+const ini = `[test]
+value = 1
+value = 2
+value = 3
+second = 1
+second = 2
+another = 1`;
+
+console.log(parse(ini, { keyMergeStrategy: KeyMergeStrategies.OVERRIDE }));
+/*
+    {
+      test: {
+        value: 3,
+        second: 2,
+        another: 1
+      }
+    }
+*/
+
+console.log(parse(ini, { keyMergeStrategy: KeyMergeStrategies.JOIN_TO_ARRAY }));
+/*
+    {
+      test: {
+        value: [1, 2, 3],
+        second: [1, 2],
+        another: 1
+      }
+    }
+*/
+
+// section - section object for merging
+// name - section key name
+// val - value for merging
+const customMergeStrategy = (section: IIniObjectSection, name: string, val: any) => {
+  section[name] = name in section ? `${section[name]}|${val.toString()}` : val.toString();
+};
+console.log(parse(ini, { keyMergeStrategy: customMergeStrategy }));
+/*
+    {
+      test: {
+        value: '1|2|3',
+        second: '1|2',
+        another: '1'
+      }
+    }
+*/
+```
+
+
 
 ## Additional tools
 The library is provided with simple helpers that should help decrease size of boilerplate.
@@ -218,7 +345,7 @@ import { writeIniFile } from 'js-ini/tools/write-ini'
 
 await writeIniFile('./mydir/example.ini', {
   server: {
-    IP: '127.0.0.1'
+    IP: '127.0.0.1',
     user: 'Smith'
   }
 }, { nothrow: true })

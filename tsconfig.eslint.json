@@ -4,7 +4,8 @@
     "src/index.ts",
     "src/tools/read-ini.ts",
     "src/tools/write-ini.ts",
-    "test/test.ts",
-    "test/tools.test.ts"
+    "test/base.test.ts",
+    "test/tools.test.ts",
+    "vitest.config.ts"
   ]
 }
