@@ -325,6 +325,31 @@ describe('base js-ini test', () => {
       });
   });
 
+  it('autotype throwing an error should be converted to ParseError', () => {
+    expect(() => {
+      parse(ini8, {
+        autoTyping: () => {
+          throw new Error('dummy error');
+        },
+      });
+    }).toThrowError('dummy error');
+  });
+
+  it('autotype throwing an error with nothrow to true should aggregate the errors', () => {
+    expect(parse(ini6, {
+      nothrow: true,
+      protoSymbol: true,
+      autoTyping: () => {
+        throw new Error('dummy error');
+      },
+    })).toEqual({
+      [$Proto]: {}, // no section has nothing was parsed successfully
+      [$Errors]: [
+        new ParsingError('polluted = "polluted"', 3, 'dummy error'),
+      ],
+    });
+  });
+
   it('ini stringify: infinity fix test', () => {
     const result = parse(ini10);
     stringify(result);

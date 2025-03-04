@@ -91,7 +91,29 @@ export function parse(data: string, params?: IParseConfig): IIniObject {
       const posOfDelimiter = line.indexOf(delimiter);
       const name = line.slice(0, posOfDelimiter).trim();
       const rawVal = line.slice(posOfDelimiter + 1).trim();
-      const val = typeParser(rawVal, currentSection, name);
+
+      let val: any;
+      try {
+        val = typeParser(rawVal, currentSection, name);
+      } catch (err: unknown) {
+        let error: ParsingError;
+        // if thrown error is instance of Error using its message
+        if (err instanceof Error) {
+          error = new ParsingError(line, lineNumber, err.message);
+        } else {
+          error = new ParsingError(line, lineNumber);
+        }
+
+        if (!nothrow) {
+          throw error;
+        } else if ($Errors in result) {
+          (result[$Errors] as ParsingError[]).push(error);
+        } else {
+          result[$Errors] = [error];
+        }
+        continue;
+      }
+
       const section = (currentSection !== '') ? (result[currentSection] as IIniObjectSection) : result;
       if (isOverrideStrategy) {
         section[name] = val;
