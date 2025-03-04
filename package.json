@@ -2,12 +2,13 @@
   "name": "js-ini",
   "version": "1.6.0",
   "description": "parsing and serialize ini files",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "dist/index.cjs",
+  "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Sdju/js-ini.git"
   },
+  "files": ["dist"],
   "bugs": {
     "email": "zede@mail.ru",
     "src": "https://github.com/Sdju/js-ini/issues"
@@ -16,7 +17,7 @@
     "test": "vitest run",
     "test-watch": "vitest",
     "lint": "eslint --cache --ext .ts src test",
-    "build": "tsc -p ./tsconfig.min.json && esbuild \"./dist/index.js\" --minify --outfile=\"dist/index.min.js\"",
+    "build": "vite build",
     "publish": "npm run lint && npm run test && npm run build && npm publish"
   },
   "husky": {
@@ -39,7 +40,8 @@
     "eslint-plugin-import": "^2.20.2",
     "husky": "^4.2.3",
     "typescript": "^4.9.5",
-    "vite": "^4.1.1",
-    "vitest": "^0.28.4"
+    "vite": "^6.2.0",
+    "vite-plugin-dts": "^4.5.3",
+    "vitest": "^2.1.6"
   }
 }

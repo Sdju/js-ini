@@ -6,6 +6,7 @@
     "src/tools/write-ini.ts",
     "test/base.test.ts",
     "test/tools.test.ts",
+    "vite.config.ts",
     "vitest.config.ts"
   ]
 }
