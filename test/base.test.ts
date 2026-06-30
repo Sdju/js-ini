@@ -272,6 +272,16 @@ describe('base js-ini test', () => {
     expect(stringify(v4)).toBe(ini12);
   });
 
+  it('ini stringify: root keys are emitted before sections', () => {
+    const obj = {
+      section: { inner: 'a' },
+      root: 'b',
+    };
+    // A root-level key declared after a section must round-trip back to the
+    // root, not be absorbed into the preceding section.
+    expect(parse(stringify(obj), { autoTyping: false })).toEqual(obj);
+  });
+
   it('ini parsing: proto', () => {
     expect(() => parse(ini6))
       .toThrow('Unsupported section name "__proto__": [2]"');

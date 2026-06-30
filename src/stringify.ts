@@ -33,7 +33,14 @@ export function stringify(data: IIniObject, params?: IStringifyConfig): string {
   let sectionKeys: string[] | null = null;
   let curKeyId: number = 0;
 
-  for (const key of Object.keys(data)) {
+  // Root-level keys must be emitted before any [section] header, otherwise a
+  // scalar key declared after a section ends up inside that section on parse.
+  const orderedKeys: string[] = [
+    ...Object.keys(data).filter((key) => typeof data[key] !== 'object'),
+    ...Object.keys(data).filter((key) => typeof data[key] === 'object'),
+  ];
+
+  for (const key of orderedKeys) {
     while (!sectionKeys || (sectionKeys.length !== curKeyId)) {
       let curKey: string;
       if (sectionKeys) {
